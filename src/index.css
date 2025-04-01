@@ -187,63 +187,63 @@
 }
 
 @layer keyframes {
-  @keyframes 'pulse-glow' {
-    '0%, 100%': { 
-      opacity: '1',
-      filter: 'brightness(1)'
-    },
-    '50%': { 
-      opacity: '0.8',
-      filter: 'brightness(1.5)'
-    },
-  };
+  @keyframes pulse-glow {
+    0%, 100% { 
+      opacity: 1;
+      filter: brightness(1);
+    }
+    50% { 
+      opacity: 0.8;
+      filter: brightness(1.5);
+    }
+  }
   
-  @keyframes 'float' {
-    '0%, 100%': { transform: 'translateY(0)' },
-    '50%': { transform: 'translateY(-10px)' },
-  };
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
   
-  @keyframes 'robot-speak' {
-    '0%, 100%': { transform: 'scaleY(0.8)' },
-    '50%': { transform: 'scaleY(1.2)' },
-  };
+  @keyframes robot-speak {
+    0%, 100% { transform: scaleY(0.8); }
+    50% { transform: scaleY(1.2); }
+  }
   
-  @keyframes 'robot-speak-mechanical' {
-    '0%, 100%': { transform: 'translateY(0)' },
-    '25%': { transform: 'translateY(-2px)' },
-    '75%': { transform: 'translateY(2px)' },
-  };
+  @keyframes robot-speak-mechanical {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-2px); }
+    75% { transform: translateY(2px); }
+  }
   
-  @keyframes 'robot-speak-pulse' {
-    '0%, 100%': { transform: 'scale(1)' },
-    '50%': { transform: 'scale(1.3)' },
-  };
+  @keyframes robot-speak-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+  }
   
-  @keyframes 'robot-speak-wave' {
-    '0%': { transform: 'translateX(-3px)' },
-    '25%': { transform: 'translateX(3px)' },
-    '50%': { transform: 'translateX(-3px)' },
-    '75%': { transform: 'translateX(3px)' },
-    '100%': { transform: 'translateX(-3px)' },
-  };
+  @keyframes robot-speak-wave {
+    0% { transform: translateX(-3px); }
+    25% { transform: translateX(3px); }
+    50% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+    100% { transform: translateX(-3px); }
+  }
   
-  @keyframes 'robot-speak-glitch' {
-    '0%, 100%': { transform: 'skew(0deg, 0deg)' },
-    '20%': { transform: 'skew(10deg, 0deg)' },
-    '40%': { transform: 'skew(-10deg, 0deg)' },
-    '60%': { transform: 'skew(10deg, 0deg)' },
-    '80%': { transform: 'skew(-10deg, 0deg)' },
-  };
+  @keyframes robot-speak-glitch {
+    0%, 100% { transform: skew(0deg, 0deg); }
+    20% { transform: skew(10deg, 0deg); }
+    40% { transform: skew(-10deg, 0deg); }
+    60% { transform: skew(10deg, 0deg); }
+    80% { transform: skew(-10deg, 0deg); }
+  }
 
-  @keyframes 'scanning-eye' {
-    '0%, 100%': { transform: 'translateX(-50%)' },
-    '50%': { transform: 'translateX(600%)' },
-  };
+  @keyframes scanning-eye {
+    0%, 100% { transform: translateX(-50%); }
+    50% { transform: translateX(600%); }
+  }
   
-  @keyframes 'radar-scan' {
-    '0%': { transform: 'rotate(0deg)' },
-    '100%': { transform: 'rotate(360deg)' },
-  };
+  @keyframes radar-scan {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 }
 
 @layer animation {
