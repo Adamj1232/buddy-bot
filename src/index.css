@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -62,7 +61,10 @@
 
 @layer components {
   .robot-part-button {
-    @apply p-3 rounded-lg bg-robot-dark border border-robot-blue text-white transition-all hover:bg-robot-blue hover:text-black font-semibold relative overflow-hidden;
+    @apply p-3 rounded-lg bg-robot-dark border-2 border-robot-metal text-white transition-all hover:bg-robot-blue hover:text-black font-semibold relative overflow-hidden;
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.25) 100%);
+    box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.15), 0 2px 5px 0 rgba(0,0,0,0.3);
+    text-shadow: 0 1px 1px rgba(0,0,0,0.7);
   }
   
   .robot-part-button::before {
@@ -76,6 +78,7 @@
   
   .color-button {
     @apply w-8 h-8 rounded-full border-2 border-white/30 transition-all hover:scale-110 hover:border-white relative overflow-hidden;
+    box-shadow: 0 0 8px rgba(255,255,255,0.3), inset 0 0 4px rgba(0,0,0,0.5);
   }
   
   .color-button::after {
@@ -88,32 +91,83 @@
   }
 
   .robot-container {
-    @apply relative flex flex-col items-center justify-center p-4 bg-robot-dark border border-robot-metal rounded-xl overflow-hidden;
+    @apply relative flex flex-col items-center justify-center p-4 bg-robot-dark border-2 border-robot-metal rounded-xl overflow-hidden;
+    width: 120%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    background-image: radial-gradient(circle at center, rgba(14, 165, 233, 0.1) 0%, transparent 70%);
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.6), 0 0 20px rgba(14, 165, 233, 0.4);
   }
 
   .robot-preview {
-    @apply w-full max-w-[280px] h-[300px] relative flex items-center justify-center;
+    @apply w-full max-w-[340px] h-[360px] relative flex items-center justify-center;
   }
 
   .build-finish-btn {
-    @apply px-6 py-3 rounded-lg bg-gradient-to-r from-robot-blue to-robot-purple text-white font-bold text-lg transition-all hover:shadow-lg relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-robot-purple before:to-robot-blue before:opacity-0 before:transition-opacity hover:before:opacity-100;
+    @apply px-6 py-3 rounded-lg text-white font-bold text-lg transition-all relative overflow-hidden;
+    background: linear-gradient(45deg, #0EA5E9, #8B5CF6);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+    border: 2px solid rgba(14, 165, 233, 0.6);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    clip-path: polygon(0 10%, 10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%);
+  }
+
+  .build-finish-btn::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(45deg, #8B5CF6, #0EA5E9);
+  }
+
+  .build-finish-btn:hover::before {
+    @apply opacity-100;
+  }
+
+  .steampunk-title {
+    @apply text-transparent bg-clip-text relative;
+    background-image: linear-gradient(to bottom, #FCD34D, #B45309);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  .steampunk-title::before {
+    content: '';
+    @apply absolute -inset-1 -z-10 blur-sm;
+    background: linear-gradient(45deg, #FCD34D33, #B4530933);
   }
 
   .robot-message-container {
-    @apply p-4 bg-robot-dark/80 backdrop-blur-md border border-robot-blue/50 rounded-lg mt-4 text-white;
+    @apply p-4 bg-robot-dark/80 backdrop-blur-md border-2 border-robot-metal/60 rounded-lg mt-4 text-white;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.4), 0 0 10px rgba(14, 165, 233, 0.3);
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.03) 0px,
+      rgba(255,255,255,0.03) 1px,
+      transparent 1px,
+      transparent 10px
+    );
   }
   
   .neo-glow {
     @apply relative;
-    box-shadow: 0 0 15px rgba(14, 165, 233, 0.4), 0 0 30px rgba(14, 165, 233, 0.2);
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.5), 0 0 40px rgba(14, 165, 233, 0.2);
   }
   
   .neo-blur {
-    @apply backdrop-blur-md bg-black/40 border border-white/10;
+    @apply backdrop-blur-md bg-black/40 border-2 border-white/10;
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.03) 0px,
+      rgba(255,255,255,0.03) 1px,
+      transparent 1px,
+      transparent 10px
+    );
   }
   
   .cyber-button {
     @apply relative overflow-hidden;
+    clip-path: polygon(0 10%, 10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%);
   }
   
   .cyber-button::before {
@@ -126,15 +180,40 @@
   }
   
   .cyber-input-container {
-    @apply relative rounded-lg overflow-hidden p-1 bg-gradient-to-r from-robot-blue/50 to-robot-purple/50;
+    @apply relative rounded-lg overflow-hidden p-1;
+    background: linear-gradient(to right, rgba(14, 165, 233, 0.5), rgba(139, 92, 246, 0.5));
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.3);
+    clip-path: polygon(0 10%, 10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%);
   }
   
   .cyber-input {
     @apply border-none focus:ring-1 focus:ring-robot-blue;
+    background-color: rgba(26, 31, 44, 0.9);
   }
   
   .pulse-red {
     animation: pulse-red 1.5s infinite;
+  }
+
+  .steampunk-panel {
+    @apply bg-robot-dark/90 border-2 border-robot-metal/80 rounded-lg overflow-hidden;
+    background-image: 
+      linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 100%),
+      repeating-linear-gradient(
+        45deg,
+        rgba(142, 145, 150, 0.1) 0px,
+        rgba(142, 145, 150, 0.1) 1px,
+        transparent 1px,
+        transparent 10px
+      );
+    box-shadow: 
+      inset 0 1px 0 0 rgba(255,255,255,0.1),
+      0 4px 10px rgba(0,0,0,0.4);
+  }
+
+  .steampunk-cog {
+    @apply absolute opacity-20;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FCD34D' stroke-width='1'%3E%3Cpath d='M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z'/%3E%3Cpath d='M19.622 10.395l-1.097-2.65L20 6l-2-2-1.735 1.483-2.707-1.113L12.935 2h-1.954l-.632 2.401-2.645 1.115L6 4 4 6l1.453 1.789-1.08 2.657L2 11v2l2.401.655L5.516 16.3 4 18l2 2 1.791-1.46 2.606 1.072L11 22h2l.604-2.387 2.651-1.098C16.697 18.831 18 20 18 20l2-2-1.484-1.75 1.098-2.652 2.386-.62V11l-2.378-.605Z'/%3E%3C/svg%3E");
   }
 }
 

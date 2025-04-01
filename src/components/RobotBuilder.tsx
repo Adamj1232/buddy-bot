@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import RobotHead from './RobotHead';
 import { Button } from '@/components/ui/button';
@@ -75,9 +74,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
   
   // Play sound effect
   const playSound = (type: string) => {
-    // In a real app, we would implement actual sound effects here
     console.log(`Playing ${type} sound effect`);
-    // Placeholder for sound implementation
   };
   
   // Update robot config
@@ -105,12 +102,17 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
   };
   
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-robot-blue to-robot-purple">
+    <div className="p-4 max-w-md mx-auto relative">
+      <div className="steampunk-cog w-32 h-32 top-0 right-0 rotate-12 opacity-10"></div>
+      <div className="steampunk-cog w-24 h-24 bottom-0 left-0 -rotate-12 opacity-10"></div>
+      
+      <h1 className="text-2xl font-bold text-center mb-6 steampunk-title relative">
         Build Your Robot Assistant
+        <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-2 h-6 bg-robot-metal/70 rounded-full"></div>
+        <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-2 h-6 bg-robot-metal/70 rounded-full"></div>
       </h1>
       
-      <div className="robot-container mb-4 neo-glow">
+      <div className="robot-container mb-6 neo-glow">
         <div className="robot-preview mb-6">
           <RobotHead
             headType={robotConfig.headType}
@@ -125,22 +127,24 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         </div>
       </div>
       
-      <Accordion type="single" collapsible className="mb-4 rounded-lg overflow-hidden border border-robot-blue/50">
+      <Accordion type="single" collapsible className="mb-4 rounded-lg overflow-hidden border-2 border-robot-blue/50 steampunk-panel">
         <AccordionItem value="robotName" className="border-none">
           <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              Robot Name
+              <span className="text-lg font-semibold">Robot Name</span>
             </span>
           </AccordionTrigger>
           <AccordionContent className="bg-robot-dark/60 p-3">
-            <Input
-              type="text"
-              value={robotName}
-              onChange={(e) => setRobotName(e.target.value)}
-              placeholder="Enter robot name..."
-              className="w-full p-2 bg-robot-dark border border-robot-metal rounded-lg text-white"
-            />
+            <div className="cyber-input-container">
+              <Input
+                type="text"
+                value={robotName}
+                onChange={(e) => setRobotName(e.target.value)}
+                placeholder="Enter robot name..."
+                className="w-full p-2 bg-robot-dark border border-robot-metal rounded-lg text-white cyber-input"
+              />
+            </div>
           </AccordionContent>
         </AccordionItem>
 
@@ -148,7 +152,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
           <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              Head Design
+              <span className="text-lg font-semibold">Head Design</span>
             </span>
           </AccordionTrigger>
           <AccordionContent className="bg-robot-dark/60 p-3">
@@ -211,7 +215,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
           <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              Face Features
+              <span className="text-lg font-semibold">Face Features</span>
             </span>
           </AccordionTrigger>
           <AccordionContent className="bg-robot-dark/60 p-3">
@@ -289,7 +293,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
           <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              Antenna
+              <span className="text-lg font-semibold">Antenna</span>
             </span>
           </AccordionTrigger>
           <AccordionContent className="bg-robot-dark/60 p-3">
@@ -314,7 +318,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         className="build-finish-btn w-full"
         onClick={finishRobot}
       >
-        Build Robot!
+        <span className="relative z-10">Build Robot!</span>
       </button>
     </div>
   );

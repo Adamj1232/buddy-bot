@@ -1,7 +1,6 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Send, Maximize, Minimize, MessageCircle } from 'lucide-react';
+import { Mic, MicOff, Send, Maximize, Minimize, MessageCircle, ArrowLeft } from 'lucide-react';
 import RobotHead from './RobotHead';
 import { useToast } from '@/components/ui/use-toast';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -31,7 +30,6 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
   const audioChunksRef = useRef<Blob[]>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // For demo purposes, let's simulate the LLM responses
   const demoResponses = [
     "The moon orbits around the Earth due to the gravitational pull between the two bodies. This gravitational interaction is what keeps the moon in its elliptical orbit and is the same force that keeps Earth orbiting the sun.",
     "The process of photosynthesis allows plants to convert sunlight into energy. Plants use chlorophyll to capture sunlight and convert carbon dioxide and water into glucose and oxygen, which is essential for all life on Earth.",
@@ -40,30 +38,24 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     "The water cycle is the continuous movement of water through the Earth's atmosphere. It includes processes like evaporation, condensation, precipitation, infiltration, and transpiration, cycling water from the oceans to the land and back.",
   ];
 
-  // Function to get a random response
   const getRandomResponse = () => {
     return demoResponses[Math.floor(Math.random() * demoResponses.length)];
   };
 
-  // Simulate text-to-speech
   const speakText = (text: string) => {
     setIsSpeaking(true);
     
-    // Split text into sentences for more natural speaking animation
     const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
     let currentIndex = 0;
     
     const speakNextSentence = () => {
       if (currentIndex < sentences.length) {
-        // Simulate speaking each sentence
-        const speakTime = sentences[currentIndex].length * 50; // Adjust time based on sentence length
-        
+        const speakTime = sentences[currentIndex].length * 50;
         setTimeout(() => {
           currentIndex++;
           speakNextSentence();
         }, speakTime);
       } else {
-        // Done speaking
         setIsSpeaking(false);
       }
     };
@@ -71,7 +63,6 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     speakNextSentence();
   };
 
-  // Start recording
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -83,20 +74,15 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
       };
 
       mediaRecorderRef.current.onstop = async () => {
-        // For demo purposes, we're not actually processing audio
-        // In a real app, we would send the audio to a speech-to-text service
         setIsSpeaking(true);
         
-        // Simulate processing delay
         setTimeout(() => {
           setIsSpeaking(false);
           
-          // For demonstration, just set a placeholder message
           const placeholderText = "How do plants make their own food?";
           setUserMessage(placeholderText);
           addMessage(placeholderText, true);
           
-          // Simulate robot response
           setTimeout(() => {
             const response = getRandomResponse();
             addMessage(response, false);
@@ -123,13 +109,11 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     }
   };
 
-  // Stop recording
   const stopRecording = () => {
     if (mediaRecorderRef.current && recording) {
       mediaRecorderRef.current.stop();
       setRecording(false);
       
-      // Stop all microphone streams
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       
       toast({
@@ -139,16 +123,13 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     }
   };
 
-  // Send text message
   const sendTextMessage = () => {
     if (userMessage.trim()) {
       addMessage(userMessage, true);
       setIsSpeaking(true);
       
-      // Clear input field
       setUserMessage('');
       
-      // Simulate robot response
       setTimeout(() => {
         const response = getRandomResponse();
         addMessage(response, false);
@@ -157,12 +138,10 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     }
   };
 
-  // Add message to chat
   const addMessage = (content: string, isUser: boolean) => {
     setMessages(prev => [...prev, { content, isUser }]);
   };
 
-  // Handle keyboard enter to send message
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -170,7 +149,6 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     }
   };
 
-  // Scroll to bottom of chat when messages change
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -178,9 +156,14 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
   }, [messages]);
 
   return (
-    <div className="p-4 max-w-md mx-auto flex flex-col h-[80vh]">
-      <h1 className="text-2xl font-bold text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-robot-blue to-robot-purple">
+    <div className="p-4 max-w-md mx-auto flex flex-col h-[80vh] relative">
+      <div className="steampunk-cog w-32 h-32 top-0 right-0 rotate-12 opacity-10"></div>
+      <div className="steampunk-cog w-24 h-24 bottom-0 left-0 -rotate-12 opacity-10"></div>
+      
+      <h1 className="text-2xl font-bold text-center mb-4 steampunk-title">
         Chat with {robotConfig.name}
+        <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-2 h-6 bg-robot-metal/70 rounded-full"></div>
+        <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-2 h-6 bg-robot-metal/70 rounded-full"></div>
       </h1>
       
       <div className="robot-container mb-4 neo-glow">
@@ -207,7 +190,7 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
       >
         <div className="flex items-center justify-between mb-2">
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="flex gap-1 text-robot-blue hover:text-robot-purple hover:bg-transparent">
+            <Button variant="ghost" size="sm" className="flex gap-1 text-robot-blue hover:text-robot-purple hover:bg-transparent cyber-button">
               {isTextExpanded ? (
                 <>
                   <Minimize className="h-4 w-4" />
@@ -231,7 +214,7 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
         <CollapsibleContent className="flex-grow flex flex-col">
           <div 
             ref={chatContainerRef}
-            className="flex-grow overflow-auto mb-4 robot-message-container neo-blur"
+            className="flex-grow overflow-auto mb-4 robot-message-container neo-blur steampunk-panel"
           >
             {messages.map((message, index) => (
               <div 
@@ -299,6 +282,7 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
         onClick={onBackToBuilder}
         className="w-full mt-4 border-robot-blue text-robot-blue hover:bg-robot-blue hover:text-white cyber-button"
       >
+        <ArrowLeft className="mr-2 h-4 w-4" />
         Back to Builder
       </Button>
     </div>
