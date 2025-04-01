@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import RobotHead from './RobotHead';
 import { Button } from '@/components/ui/button';
@@ -37,12 +38,12 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
     name: '',
   });
 
-  // Options for each part
-  const headOptions = ['square', 'round', 'hex', 'triangular', 'octagon'];
-  const eyeOptions = ['round', 'square', 'visor', 'scanner', 'alien'];
-  const mouthOptions = ['smile', 'grid', 'line', 'speaker', 'vent'];
-  const antennaOptions = ['single', 'double', 'satellite', 'radar', 'none'];
-  const textureOptions = ['smooth', 'metallic', 'rusty', 'digital', 'holographic'];
+  // Options for each part with enhanced mechanical options
+  const headOptions = ['square', 'round', 'hex', 'triangular', 'octagon', 'transformer', 'mecha'];
+  const eyeOptions = ['round', 'square', 'visor', 'scanner', 'alien', 'optical'];
+  const mouthOptions = ['smile', 'grid', 'line', 'speaker', 'vent', 'mask'];
+  const antennaOptions = ['single', 'double', 'satellite', 'radar', 'combat', 'none'];
+  const textureOptions = ['smooth', 'metallic', 'rusty', 'digital', 'holographic', 'plated', 'armored'];
   const mouthAnimOptions = ['standard', 'robotic', 'pulse', 'wave', 'glitch'];
   
   // Color options
@@ -127,7 +128,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         </div>
       </div>
       
-      <Accordion type="single" collapsible className="mb-4 rounded-lg overflow-hidden border-2 border-robot-blue/50 steampunk-panel">
+      <Accordion type="single" collapsible className="mb-4 rounded-lg overflow-hidden border-2 border-robot-metal/50 steampunk-panel">
         <AccordionItem value="robotName" className="border-none">
           <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
             <span className="flex items-center gap-2">
@@ -315,7 +316,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
       </Accordion>
       
       <button
-        className="build-finish-btn w-full"
+        className="build-finish-btn w-full cyber-button"
         onClick={finishRobot}
       >
         <span className="relative z-10">Build Robot!</span>
