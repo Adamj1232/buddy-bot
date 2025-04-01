@@ -114,6 +114,41 @@ export default {
 				'robot-speak': {
 					'0%, 100%': { transform: 'scaleY(0.8)' },
 					'50%': { transform: 'scaleY(1.2)' },
+				},
+				'robot-speak-mechanical': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'25%': { transform: 'translateY(-2px)' },
+					'75%': { transform: 'translateY(2px)' },
+				},
+				'robot-speak-pulse': {
+					'0%, 100%': { transform: 'scale(1)' },
+					'50%': { transform: 'scale(1.3)' },
+				},
+				'robot-speak-wave': {
+					'0%': { transform: 'translateX(-3px)' },
+					'25%': { transform: 'translateX(3px)' },
+					'50%': { transform: 'translateX(-3px)' },
+					'75%': { transform: 'translateX(3px)' },
+					'100%': { transform: 'translateX(-3px)' },
+				},
+				'robot-speak-glitch': {
+					'0%, 100%': { transform: 'skew(0deg, 0deg)' },
+					'20%': { transform: 'skew(10deg, 0deg)' },
+					'40%': { transform: 'skew(-10deg, 0deg)' },
+					'60%': { transform: 'skew(10deg, 0deg)' },
+					'80%': { transform: 'skew(-10deg, 0deg)' },
+				},
+				'scanning-eye': {
+					'0%, 100%': { transform: 'translateX(-50%)' },
+					'50%': { transform: 'translateX(600%)' },
+				},
+				'radar-scan': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' },
+				},
+				'sound-wave': {
+					'0%, 100%': { transform: 'scaleY(0.5)' },
+					'50%': { transform: 'scaleY(1.5)' },
 				}
 			},
 			animation: {
@@ -121,7 +156,14 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'pulse-glow': 'pulse-glow 2s infinite ease-in-out',
 				'float': 'float 6s infinite ease-in-out',
-				'robot-speak': 'robot-speak 0.5s infinite ease-in-out'
+				'robot-speak': 'robot-speak 0.5s infinite ease-in-out',
+				'robot-speak-mechanical': 'robot-speak-mechanical 0.3s infinite ease-in-out',
+				'robot-speak-pulse': 'robot-speak-pulse 0.5s infinite ease-in-out',
+				'robot-speak-wave': 'robot-speak-wave 0.5s infinite ease-in-out',
+				'robot-speak-glitch': 'robot-speak-glitch 0.6s infinite',
+				'scanning-eye': 'scanning-eye 2s infinite ease-in-out',
+				'radar-scan': 'radar-scan 3s infinite linear',
+				'sound-wave': 'sound-wave 0.4s infinite ease-in-out'
 			}
 		}
 	},

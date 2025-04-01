@@ -54,16 +54,37 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-image: 
+      radial-gradient(circle at 20% 30%, rgba(10, 108, 172, 0.15) 0%, transparent 200px),
+      radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 200px);
   }
 }
 
 @layer components {
   .robot-part-button {
-    @apply p-3 rounded-lg bg-robot-dark border border-robot-blue text-white transition-all hover:bg-robot-blue hover:text-black font-semibold;
+    @apply p-3 rounded-lg bg-robot-dark border border-robot-blue text-white transition-all hover:bg-robot-blue hover:text-black font-semibold relative overflow-hidden;
+  }
+  
+  .robot-part-button::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full transition-transform duration-300;
+  }
+  
+  .robot-part-button:hover::before {
+    @apply translate-x-full;
   }
   
   .color-button {
-    @apply w-8 h-8 rounded-full border-2 border-white/30 transition-all hover:scale-110 hover:border-white;
+    @apply w-8 h-8 rounded-full border-2 border-white/30 transition-all hover:scale-110 hover:border-white relative overflow-hidden;
+  }
+  
+  .color-button::after {
+    content: '';
+    @apply absolute top-0 left-0 w-full h-full bg-white/30 opacity-0 transition-opacity;
+  }
+  
+  .color-button:hover::after {
+    @apply opacity-100;
   }
 
   .robot-container {
@@ -75,10 +96,194 @@
   }
 
   .build-finish-btn {
-    @apply px-6 py-3 rounded-lg bg-robot-blue text-white font-bold text-lg transition-all hover:bg-robot-purple hover:shadow-lg;
+    @apply px-6 py-3 rounded-lg bg-gradient-to-r from-robot-blue to-robot-purple text-white font-bold text-lg transition-all hover:shadow-lg relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-robot-purple before:to-robot-blue before:opacity-0 before:transition-opacity hover:before:opacity-100;
   }
 
   .robot-message-container {
-    @apply p-4 bg-robot-dark/80 backdrop-blur-md border border-robot-blue rounded-lg mt-4 text-white;
+    @apply p-4 bg-robot-dark/80 backdrop-blur-md border border-robot-blue/50 rounded-lg mt-4 text-white;
+  }
+  
+  .neo-glow {
+    @apply relative;
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.4), 0 0 30px rgba(14, 165, 233, 0.2);
+  }
+  
+  .neo-blur {
+    @apply backdrop-blur-md bg-black/40 border border-white/10;
+  }
+  
+  .cyber-button {
+    @apply relative overflow-hidden;
+  }
+  
+  .cyber-button::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-robot-blue/30 via-robot-purple/30 to-robot-blue/30 opacity-0 transition-opacity;
+  }
+  
+  .cyber-button:hover::before {
+    @apply opacity-100;
+  }
+  
+  .cyber-input-container {
+    @apply relative rounded-lg overflow-hidden p-1 bg-gradient-to-r from-robot-blue/50 to-robot-purple/50;
+  }
+  
+  .cyber-input {
+    @apply border-none focus:ring-1 focus:ring-robot-blue;
+  }
+  
+  .pulse-red {
+    animation: pulse-red 1.5s infinite;
+  }
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(244, 63, 94, 0);
+  }
+}
+
+@keyframes holographic-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes scanning-eye {
+  0%, 100% {
+    transform: translateX(-50%);
+  }
+  50% {
+    transform: translateX(600%);
+  }
+}
+
+@keyframes radar-scan {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sound-wave {
+  0%, 100% {
+    transform: scaleY(0.5);
+  }
+  50% {
+    transform: scaleY(1.5);
+  }
+}
+
+@layer keyframes {
+  @keyframes 'pulse-glow' {
+    '0%, 100%': { 
+      opacity: '1',
+      filter: 'brightness(1)'
+    },
+    '50%': { 
+      opacity: '0.8',
+      filter: 'brightness(1.5)'
+    },
+  };
+  
+  @keyframes 'float' {
+    '0%, 100%': { transform: 'translateY(0)' },
+    '50%': { transform: 'translateY(-10px)' },
+  };
+  
+  @keyframes 'robot-speak' {
+    '0%, 100%': { transform: 'scaleY(0.8)' },
+    '50%': { transform: 'scaleY(1.2)' },
+  };
+  
+  @keyframes 'robot-speak-mechanical' {
+    '0%, 100%': { transform: 'translateY(0)' },
+    '25%': { transform: 'translateY(-2px)' },
+    '75%': { transform: 'translateY(2px)' },
+  };
+  
+  @keyframes 'robot-speak-pulse' {
+    '0%, 100%': { transform: 'scale(1)' },
+    '50%': { transform: 'scale(1.3)' },
+  };
+  
+  @keyframes 'robot-speak-wave' {
+    '0%': { transform: 'translateX(-3px)' },
+    '25%': { transform: 'translateX(3px)' },
+    '50%': { transform: 'translateX(-3px)' },
+    '75%': { transform: 'translateX(3px)' },
+    '100%': { transform: 'translateX(-3px)' },
+  };
+  
+  @keyframes 'robot-speak-glitch' {
+    '0%, 100%': { transform: 'skew(0deg, 0deg)' },
+    '20%': { transform: 'skew(10deg, 0deg)' },
+    '40%': { transform: 'skew(-10deg, 0deg)' },
+    '60%': { transform: 'skew(10deg, 0deg)' },
+    '80%': { transform: 'skew(-10deg, 0deg)' },
+  };
+
+  @keyframes 'scanning-eye' {
+    '0%, 100%': { transform: 'translateX(-50%)' },
+    '50%': { transform: 'translateX(600%)' },
+  };
+  
+  @keyframes 'radar-scan' {
+    '0%': { transform: 'rotate(0deg)' },
+    '100%': { transform: 'rotate(360deg)' },
+  };
+}
+
+@layer animation {
+  .animate-pulse-glow {
+    animation: pulse-glow 2s infinite ease-in-out;
+  }
+  
+  .animate-float {
+    animation: float 6s infinite ease-in-out;
+  }
+  
+  .animate-robot-speak {
+    animation: robot-speak 0.5s infinite ease-in-out;
+  }
+  
+  .animate-robot-speak-mechanical {
+    animation: robot-speak-mechanical 0.3s infinite ease-in-out;
+  }
+  
+  .animate-robot-speak-pulse {
+    animation: robot-speak-pulse 0.5s infinite ease-in-out;
+  }
+  
+  .animate-robot-speak-wave {
+    animation: robot-speak-wave 0.5s infinite ease-in-out;
+  }
+  
+  .animate-robot-speak-glitch {
+    animation: robot-speak-glitch 0.6s infinite;
+  }
+  
+  .animate-scanning-eye {
+    animation: scanning-eye 2s infinite ease-in-out;
+  }
+  
+  .animate-radar-scan {
+    animation: radar-scan 3s infinite linear;
+  }
+  
+  .animate-sound-wave {
+    animation: sound-wave 0.4s infinite ease-in-out;
   }
 }
