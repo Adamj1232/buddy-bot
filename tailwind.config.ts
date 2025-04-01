@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,6 +53,17 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Robot theme colors
+				robot: {
+					blue: '#0EA5E9',
+					red: '#F43F5E',
+					yellow: '#FCD34D',
+					green: '#10B981',
+					purple: '#8B5CF6',
+					dark: '#1A1F2C',
+					metal: '#8E9196',
+					light: '#E5DEFF',
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -84,11 +96,32 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-glow': {
+					'0%, 100%': { 
+						opacity: '1',
+						filter: 'brightness(1)'
+					},
+					'50%': { 
+						opacity: '0.8',
+						filter: 'brightness(1.2)'
+					},
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' },
+				},
+				'robot-speak': {
+					'0%, 100%': { transform: 'scaleY(0.8)' },
+					'50%': { transform: 'scaleY(1.2)' },
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 2s infinite ease-in-out',
+				'float': 'float 6s infinite ease-in-out',
+				'robot-speak': 'robot-speak 0.5s infinite ease-in-out'
 			}
 		}
 	},
