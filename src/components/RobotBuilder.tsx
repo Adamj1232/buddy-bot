@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import RobotHead from './RobotHead';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import { Input } from '@/components/ui/input';
 
 type RobotBuilderProps = {
   onRobotComplete: (robotConfig: RobotConfig) => void;
@@ -65,6 +66,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
   
   // Update robot config
   const updateRobotPart = (part: keyof RobotConfig, value: string) => {
+    console.log(`Updating ${part} to ${value}`);
     setRobotConfig(prev => ({ ...prev, [part]: value }));
     playSound('click');
   };
@@ -107,7 +109,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
       <div className="grid grid-cols-1 gap-4 mb-8">
         <div>
           <label className="block text-sm font-medium text-robot-blue mb-2">Robot Name</label>
-          <input
+          <Input
             type="text"
             value={robotName}
             onChange={(e) => setRobotName(e.target.value)}
@@ -118,11 +120,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         
         <div>
           <label className="block text-sm font-medium text-robot-blue mb-2">Head Shape</label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {headOptions.map(option => (
               <button
                 key={option}
-                className={`robot-part-button ${robotConfig.headType === option ? 'bg-robot-blue text-black' : ''}`}
+                className={`robot-part-button flex-1 ${robotConfig.headType === option ? 'bg-robot-blue text-black' : ''}`}
                 onClick={() => updateRobotPart('headType', option)}
               >
                 {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -133,11 +135,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         
         <div>
           <label className="block text-sm font-medium text-robot-blue mb-2">Eyes</label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {eyeOptions.map(option => (
               <button
                 key={option}
-                className={`robot-part-button ${robotConfig.eyeType === option ? 'bg-robot-blue text-black' : ''}`}
+                className={`robot-part-button flex-1 ${robotConfig.eyeType === option ? 'bg-robot-blue text-black' : ''}`}
                 onClick={() => updateRobotPart('eyeType', option)}
               >
                 {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -148,11 +150,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         
         <div>
           <label className="block text-sm font-medium text-robot-blue mb-2">Mouth</label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {mouthOptions.map(option => (
               <button
                 key={option}
-                className={`robot-part-button ${robotConfig.mouthType === option ? 'bg-robot-blue text-black' : ''}`}
+                className={`robot-part-button flex-1 ${robotConfig.mouthType === option ? 'bg-robot-blue text-black' : ''}`}
                 onClick={() => updateRobotPart('mouthType', option)}
               >
                 {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -167,7 +169,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
             {antennaOptions.map(option => (
               <button
                 key={option}
-                className={`robot-part-button ${robotConfig.antennaType === option ? 'bg-robot-blue text-black' : ''}`}
+                className={`robot-part-button flex-1 ${robotConfig.antennaType === option ? 'bg-robot-blue text-black' : ''}`}
                 onClick={() => updateRobotPart('antennaType', option)}
               >
                 {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -178,11 +180,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         
         <div>
           <label className="block text-sm font-medium text-robot-blue mb-2">Head Color</label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {headColors.map(({ name, color }) => (
               <button
                 key={color}
-                className="color-button"
+                className="color-button relative"
                 style={{ backgroundColor: color }}
                 title={name}
                 onClick={() => updateRobotPart('headColor', color)}
@@ -199,11 +201,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         
         <div>
           <label className="block text-sm font-medium text-robot-blue mb-2">Eye Color</label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {eyeColors.map(({ name, color }) => (
               <button
                 key={color}
-                className="color-button"
+                className="color-button relative"
                 style={{ backgroundColor: color }}
                 title={name}
                 onClick={() => updateRobotPart('eyeColor', color)}
