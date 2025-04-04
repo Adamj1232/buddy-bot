@@ -1,10 +1,13 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Send, Maximize, Minimize, MessageCircle, ArrowLeft } from 'lucide-react';
 import RobotHead from './RobotHead';
 import { useToast } from '@/components/ui/use-toast';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useIsMobile } from '@/hooks/use-mobile';
 import type { RobotConfig } from './RobotBuilder';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type RobotChatProps = {
   robotConfig: RobotConfig;
@@ -18,6 +21,7 @@ type Message = {
 
 const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [recording, setRecording] = useState(false);
   const [userMessage, setUserMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([
@@ -156,11 +160,11 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
   }, [messages]);
 
   return (
-    <div className="p-4 max-w-md mx-auto flex flex-col h-[80vh] relative">
+    <div className="p-2 sm:p-4 max-w-md mx-auto flex flex-col h-[80vh] relative">
       <div className="steampunk-cog w-32 h-32 top-0 right-0 rotate-12 opacity-10"></div>
       <div className="steampunk-cog w-24 h-24 bottom-0 left-0 -rotate-12 opacity-10"></div>
       
-      <h1 className="text-2xl font-bold text-center mb-4 steampunk-title">
+      <h1 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4 steampunk-title">
         Chat with {robotConfig.name}
         <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-2 h-6 bg-robot-metal/70 rounded-full"></div>
         <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-2 h-6 bg-robot-metal/70 rounded-full"></div>
@@ -212,22 +216,24 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
         </div>
         
         <CollapsibleContent className="flex-grow flex flex-col">
-          <div 
+          <ScrollArea 
+            className="flex-grow mb-4 robot-message-container neo-blur steampunk-panel"
             ref={chatContainerRef}
-            className="flex-grow overflow-auto mb-4 robot-message-container neo-blur steampunk-panel"
           >
-            {messages.map((message, index) => (
-              <div 
-                key={index} 
-                className={`mb-2 p-2 rounded-lg ${message.isUser ? 
-                  'bg-robot-blue/20 border border-robot-blue text-white ml-auto max-w-[80%]' : 
-                  'bg-robot-dark border border-robot-metal text-white mr-auto max-w-[80%]'
-                }`}
-              >
-                <p>{message.content}</p>
-              </div>
-            ))}
-          </div>
+            <div className="p-2">
+              {messages.map((message, index) => (
+                <div 
+                  key={index} 
+                  className={`mb-2 p-2 rounded-lg ${message.isUser ? 
+                    'bg-robot-blue/20 border border-robot-blue text-white ml-auto max-w-[80%]' : 
+                    'bg-robot-dark border border-robot-metal text-white mr-auto max-w-[80%]'
+                  }`}
+                >
+                  <p>{message.content}</p>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
           
           <div className="mt-auto">
             <div className="flex items-center gap-2 cyber-input-container">

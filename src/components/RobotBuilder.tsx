@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import RobotHead from './RobotHead';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
 import { ChevronDown } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type RobotBuilderProps = {
   onRobotComplete: (robotConfig: RobotConfig) => void;
@@ -25,6 +25,7 @@ export type RobotConfig = {
 
 const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [robotName, setRobotName] = useState('');
   const [robotConfig, setRobotConfig] = useState<RobotConfig>({
     headType: 'square',
@@ -73,16 +74,10 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
     { name: 'Turquoise', color: '#5EEAD4' },
   ];
   
-  // Play sound effect
-  const playSound = (type: string) => {
-    console.log(`Playing ${type} sound effect`);
-  };
-  
   // Update robot config
   const updateRobotPart = (part: keyof RobotConfig, value: string) => {
     console.log(`Updating ${part} to ${value}`);
     setRobotConfig(prev => ({ ...prev, [part]: value }));
-    playSound('click');
   };
   
   // Complete robot building
@@ -98,23 +93,22 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
     
     const completeConfig = { ...robotConfig, name: robotName };
     setRobotConfig(completeConfig);
-    playSound('complete');
     onRobotComplete(completeConfig);
   };
   
   return (
-    <div className="p-4 max-w-md mx-auto relative">
+    <div className="p-2 sm:p-4 max-w-md mx-auto relative">
       <div className="steampunk-cog w-32 h-32 top-0 right-0 rotate-12 opacity-10"></div>
       <div className="steampunk-cog w-24 h-24 bottom-0 left-0 -rotate-12 opacity-10"></div>
       
-      <h1 className="text-2xl font-bold text-center mb-6 steampunk-title relative">
+      <h1 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6 steampunk-title relative">
         Build Your Robot Assistant
         <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-2 h-6 bg-robot-metal/70 rounded-full"></div>
         <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-2 h-6 bg-robot-metal/70 rounded-full"></div>
       </h1>
       
-      <div className="robot-container mb-6 neo-glow">
-        <div className="robot-preview mb-6">
+      <div className="robot-container mb-4 sm:mb-6 neo-glow">
+        <div className="robot-preview">
           <RobotHead
             headType={robotConfig.headType}
             eyeType={robotConfig.eyeType}
@@ -133,7 +127,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
           <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              <span className="text-lg font-semibold">Robot Name</span>
+              <span className="text-base sm:text-lg font-semibold">Robot Name</span>
             </span>
           </AccordionTrigger>
           <AccordionContent className="bg-robot-dark/60 p-3">
@@ -153,18 +147,18 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
           <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              <span className="text-lg font-semibold">Head Design</span>
+              <span className="text-base sm:text-lg font-semibold">Head Design</span>
             </span>
           </AccordionTrigger>
           <AccordionContent className="bg-robot-dark/60 p-3">
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium text-robot-blue mb-2">Head Shape</label>
-                <div className="flex gap-2 flex-wrap">
+                <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
                   {headOptions.map(option => (
                     <button
                       key={option}
-                      className={`robot-part-button flex-1 ${robotConfig.headType === option ? 'bg-robot-blue text-black' : ''}`}
+                      className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.headType === option ? 'bg-robot-blue text-black' : ''}`}
                       onClick={() => updateRobotPart('headType', option)}
                     >
                       {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -175,11 +169,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
               
               <div>
                 <label className="block text-sm font-medium text-robot-blue mb-2">Texture</label>
-                <div className="flex gap-2 flex-wrap">
+                <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
                   {textureOptions.map(option => (
                     <button
                       key={option}
-                      className={`robot-part-button flex-1 ${robotConfig.headTexture === option ? 'bg-robot-blue text-black' : ''}`}
+                      className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.headTexture === option ? 'bg-robot-blue text-black' : ''}`}
                       onClick={() => updateRobotPart('headTexture', option)}
                     >
                       {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -190,7 +184,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
               
               <div>
                 <label className="block text-sm font-medium text-robot-blue mb-2">Head Color</label>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-2 flex-wrap justify-center">
                   {headColors.map(({ name, color }) => (
                     <button
                       key={color}
@@ -216,18 +210,18 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
           <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              <span className="text-lg font-semibold">Face Features</span>
+              <span className="text-base sm:text-lg font-semibold">Face Features</span>
             </span>
           </AccordionTrigger>
           <AccordionContent className="bg-robot-dark/60 p-3">
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium text-robot-blue mb-2">Eyes</label>
-                <div className="flex gap-2 flex-wrap">
+                <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
                   {eyeOptions.map(option => (
                     <button
                       key={option}
-                      className={`robot-part-button flex-1 ${robotConfig.eyeType === option ? 'bg-robot-blue text-black' : ''}`}
+                      className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.eyeType === option ? 'bg-robot-blue text-black' : ''}`}
                       onClick={() => updateRobotPart('eyeType', option)}
                     >
                       {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -238,7 +232,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
               
               <div>
                 <label className="block text-sm font-medium text-robot-blue mb-2">Eye Color</label>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-2 flex-wrap justify-center">
                   {eyeColors.map(({ name, color }) => (
                     <button
                       key={color}
@@ -259,11 +253,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
 
               <div>
                 <label className="block text-sm font-medium text-robot-blue mb-2">Mouth</label>
-                <div className="flex gap-2 flex-wrap">
+                <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
                   {mouthOptions.map(option => (
                     <button
                       key={option}
-                      className={`robot-part-button flex-1 ${robotConfig.mouthType === option ? 'bg-robot-blue text-black' : ''}`}
+                      className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.mouthType === option ? 'bg-robot-blue text-black' : ''}`}
                       onClick={() => updateRobotPart('mouthType', option)}
                     >
                       {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -274,11 +268,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
 
               <div>
                 <label className="block text-sm font-medium text-robot-blue mb-2">Mouth Animation</label>
-                <div className="flex gap-2 flex-wrap">
+                <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
                   {mouthAnimOptions.map(option => (
                     <button
                       key={option}
-                      className={`robot-part-button flex-1 ${robotConfig.mouthAnimation === option ? 'bg-robot-blue text-black' : ''}`}
+                      className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.mouthAnimation === option ? 'bg-robot-blue text-black' : ''}`}
                       onClick={() => updateRobotPart('mouthAnimation', option)}
                     >
                       {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -294,16 +288,16 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
           <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              <span className="text-lg font-semibold">Antenna</span>
+              <span className="text-base sm:text-lg font-semibold">Antenna</span>
             </span>
           </AccordionTrigger>
           <AccordionContent className="bg-robot-dark/60 p-3">
             <div>
-              <div className="flex gap-2 flex-wrap">
+              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
                 {antennaOptions.map(option => (
                   <button
                     key={option}
-                    className={`robot-part-button flex-1 ${robotConfig.antennaType === option ? 'bg-robot-blue text-black' : ''}`}
+                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.antennaType === option ? 'bg-robot-blue text-black' : ''}`}
                     onClick={() => updateRobotPart('antennaType', option)}
                   >
                     {option.charAt(0).toUpperCase() + option.slice(1)}

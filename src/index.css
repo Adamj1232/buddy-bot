@@ -92,8 +92,8 @@
 
   .robot-container {
     @apply relative flex flex-col items-center justify-center p-4 bg-robot-dark border-2 border-robot-metal rounded-xl overflow-hidden;
-    width: 120%;
-    max-width: 400px;
+    width: 100%;
+    max-width: 350px;
     margin-left: auto;
     margin-right: auto;
     background-image: radial-gradient(circle at center, rgba(14, 165, 233, 0.1) 0%, transparent 70%);
@@ -101,7 +101,8 @@
   }
 
   .robot-preview {
-    @apply w-full max-w-[340px] h-[360px] relative flex items-center justify-center;
+    @apply w-full h-[300px] relative flex items-center justify-center;
+    max-width: 320px;
   }
 
   .build-finish-btn {
