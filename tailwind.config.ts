@@ -80,6 +80,9 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			backgroundImage: {
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+			},
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -146,6 +149,18 @@ export default {
 					'0%': { transform: 'rotate(0deg)' },
 					'100%': { transform: 'rotate(360deg)' },
 				},
+				'radar-scan-reverse': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(-360deg)' },
+				},
+				'radar-scan-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' },
+				},
+				'radar-scan-reverse-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(-360deg)' },
+				},
 				'sound-wave': {
 					'0%, 100%': { transform: 'scaleY(0.5)' },
 					'50%': { transform: 'scaleY(1.5)' },
@@ -163,6 +178,9 @@ export default {
 				'robot-speak-glitch': 'robot-speak-glitch 0.6s infinite',
 				'scanning-eye': 'scanning-eye 2s infinite ease-in-out',
 				'radar-scan': 'radar-scan 3s infinite linear',
+				'radar-scan-reverse': 'radar-scan-reverse 3s infinite linear',
+				'radar-scan-slow': 'radar-scan-slow 20s infinite linear',
+				'radar-scan-reverse-slow': 'radar-scan-reverse-slow 15s infinite linear',
 				'sound-wave': 'sound-wave 0.4s infinite ease-in-out'
 			}
 		}
