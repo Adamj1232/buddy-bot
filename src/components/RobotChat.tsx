@@ -11,7 +11,7 @@ import { getEducationalResponse } from '@/services/aiService';
 import { textToSpeech } from '@/services/speechService';
 import { useApiKeys } from '@/hooks/use-api-keys';
 import ApiKeyConfig from './ApiKeyConfig';
-import { websocketService } from '@/services/websocketService';
+import websocketService from '@/services/websocketService';
 
 type RobotChatProps = {
   robotConfig: RobotConfig;
@@ -44,13 +44,11 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Check if API keys are configured on initial load
   useEffect(() => {
     if (!isConfigured) {
       setApiConfigOpen(true);
     }
     
-    // Connect to WebSocket if using default server
     if (apiKeys.useDefaultServer) {
       websocketService.connect().catch(error => {
         console.error("Failed to connect to WebSocket:", error);
@@ -62,7 +60,6 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
       });
     }
     
-    // Cleanup WebSocket connection when component unmounts
     return () => {
       if (apiKeys.useDefaultServer) {
         websocketService.disconnect();
@@ -118,15 +115,11 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
   };
 
   const processAudioToText = async (audioBlob: Blob) => {
-    // In a real implementation, we would use a speech-to-text service here
-    // For now, we'll show a placeholder message to simulate processing
     toast({
       title: "Processing Speech",
       description: "Converting your audio to text...",
     });
     
-    // Simulating speech recognition with a timeout
-    // In a real implementation, this would be replaced with an actual STT service call
     setTimeout(() => {
       const simulatedText = "How does photosynthesis work?";
       setUserMessage(simulatedText);
@@ -152,14 +145,11 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
       return;
     }
 
-    // Add user message to chat
     addMessage(content, true);
     
-    // Set state to show loading
     setProcessingMessage(true);
 
     try {
-      // Add a pending bot message
       const pendingMessageIndex = messages.length;
       setMessages(prev => [...prev, { 
         content: "Thinking...", 
@@ -167,14 +157,12 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
         status: 'pending' 
       }]);
 
-      // Get response from AI service
       const response = await getEducationalResponse(
         content, 
         apiKeys.openai, 
         apiKeys.useDefaultServer
       );
       
-      // Replace the pending message with the actual response
       setMessages(prev => {
         const updatedMessages = [...prev];
         updatedMessages[pendingMessageIndex] = { 
@@ -185,7 +173,6 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
         return updatedMessages;
       });
 
-      // Generate speech
       speakText(response);
     } catch (error) {
       console.error('Error processing message:', error);
@@ -195,7 +182,6 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
         variant: "destructive"
       });
       
-      // Update pending message to show error
       setMessages(prev => {
         const updatedMessages = [...prev];
         const pendingIndex = updatedMessages.findIndex(
@@ -221,26 +207,21 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     try {
       setIsSpeaking(true);
       
-      // Stop any currently playing audio
       if (currentAudioRef.current) {
         currentAudioRef.current.pause();
         currentAudioRef.current = null;
       }
       
-      // Generate speech audio from text
       const audio = await textToSpeech(text, apiKeys.elevenlabs || '');
       currentAudioRef.current = audio;
       
-      // Play the audio and animate mouth
       audio.play();
       
-      // When audio ends, stop speaking animation
       audio.onended = () => {
         setIsSpeaking(false);
         currentAudioRef.current = null;
       };
       
-      // If there's an error, stop speaking animation
       audio.onerror = () => {
         setIsSpeaking(false);
         currentAudioRef.current = null;
@@ -272,7 +253,6 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     }
   };
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -291,7 +271,6 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
       </h1>
       
       <div className="robot-container mb-4 neo-glow relative">
-        {/* Added padding-top to create space for antenna */}
         <div className={`robot-preview mb-2 ${robotConfig.antennaType !== 'none' ? 'pt-10 sm:pt-12' : 'pt-2'}`}>
           <RobotHead
             headType={robotConfig.headType}
