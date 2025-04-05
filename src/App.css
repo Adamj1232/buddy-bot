@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -40,3 +41,19 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Mobile adjustments for the robot container */
+@media (max-width: 768px) {
+  .robot-preview {
+    transform: scale(0.85);
+    transform-origin: center top;
+  }
+  
+  /* Enhance room for antenna on mobile devices */
+  [data-antenna-type="radar"],
+  [data-antenna-type="satellite"],
+  [data-antenna-type="combat"] {
+    margin-top: 1.5rem;
+  }
+}
+

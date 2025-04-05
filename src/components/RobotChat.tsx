@@ -267,8 +267,9 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
         <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-2 h-6 bg-robot-metal/70 rounded-full"></div>
       </h1>
       
-      <div className="robot-container mb-4 neo-glow">
-        <div className="robot-preview mb-2">
+      <div className="robot-container mb-4 neo-glow relative">
+        {/* Added padding-top to create space for antenna */}
+        <div className={`robot-preview mb-2 ${robotConfig.antennaType !== 'none' ? 'pt-10 sm:pt-12' : 'pt-2'}`}>
           <RobotHead
             headType={robotConfig.headType}
             eyeType={robotConfig.eyeType}

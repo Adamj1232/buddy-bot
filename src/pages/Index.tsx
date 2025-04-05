@@ -37,16 +37,18 @@ const Index = () => {
         <div className="steampunk-cog w-48 h-48 bottom-0 right-0 opacity-5 absolute"></div>
       </div>
       
-      <header className="p-2 sm:p-4 bg-robot-dark border-b-2 border-robot-metal relative">
-        <div className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 bg-robot-blue rounded-full glow animate-pulse"></div>
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 bg-robot-purple rounded-full glow animate-pulse"></div>
-        
-        <h1 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold text-center steampunk-title relative inline-block mx-auto`}>
-          Robo-Builder Communicator
-        </h1>
-      </header>
+      {!robotComplete && (
+        <header className="p-2 sm:p-4 bg-robot-dark border-b-2 border-robot-metal relative">
+          <div className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 bg-robot-blue rounded-full glow animate-pulse"></div>
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 bg-robot-purple rounded-full glow animate-pulse"></div>
+          
+          <h1 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold text-center steampunk-title relative inline-block mx-auto`}>
+            Robo-Builder Communicator
+          </h1>
+        </header>
+      )}
       
-      <main className="flex-grow">
+      <main className={`flex-grow ${robotComplete ? 'pt-2 sm:pt-4' : ''}`}>
         {robotComplete && robotConfig ? (
           <RobotChat 
             robotConfig={robotConfig} 
