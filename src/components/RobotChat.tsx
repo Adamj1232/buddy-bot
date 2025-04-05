@@ -12,6 +12,7 @@ import { textToSpeech } from '@/services/speechService';
 import { useApiKeys } from '@/hooks/use-api-keys';
 import ApiKeyConfig from './ApiKeyConfig';
 import websocketService from '@/services/websocketService';
+import speechRecognitionService from '@/services/speechRecognitionService';
 
 type RobotChatProps = {
   robotConfig: RobotConfig;
@@ -68,63 +69,57 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
   }, [isConfigured, apiKeys.useDefaultServer]);
 
   const startRecording = async () => {
+    if (!speechRecognitionService.isSupported()) {
+      toast({
+        title: "Speech Recognition Unavailable",
+        description: "Your browser doesn't support speech recognition. Please type your question instead.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorderRef.current = new MediaRecorder(stream);
-      audioChunksRef.current = [];
-
-      mediaRecorderRef.current.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
-      };
-
-      mediaRecorderRef.current.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current);
-        processAudioToText(audioBlob);
-      };
-
-      mediaRecorderRef.current.start();
       setRecording(true);
       
       toast({
-        title: "Recording Started",
-        description: "Speak your question clearly...",
+        title: "Listening...",
+        description: "Speak your question clearly",
       });
       
+      const transcript = await speechRecognitionService.startListening();
+      
+      if (transcript) {
+        setUserMessage(transcript);
+        sendMessage(transcript);
+      } else {
+        toast({
+          title: "No Speech Detected",
+          description: "Please try speaking again or type your question",
+          variant: "destructive"
+        });
+      }
     } catch (error) {
-      console.error('Error accessing microphone:', error);
+      console.error('Speech recognition error:', error);
       toast({
-        title: "Microphone Error",
-        description: "Could not access your microphone",
+        title: "Speech Recognition Error",
+        description: error instanceof Error ? error.message : "Could not process your speech",
         variant: "destructive"
       });
+    } finally {
+      setRecording(false);
     }
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && recording) {
-      mediaRecorderRef.current.stop();
+    if (recording) {
+      speechRecognitionService.stopListening();
       setRecording(false);
       
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-      
       toast({
-        title: "Recording Stopped",
-        description: "Processing your question...",
+        title: "Listening Stopped",
+        description: "Processing what you said...",
       });
     }
-  };
-
-  const processAudioToText = async (audioBlob: Blob) => {
-    toast({
-      title: "Processing Speech",
-      description: "Converting your audio to text...",
-    });
-    
-    setTimeout(() => {
-      const simulatedText = "How does photosynthesis work?";
-      setUserMessage(simulatedText);
-      sendMessage(simulatedText);
-    }, 1500);
   };
 
   const sendTextMessage = () => {
