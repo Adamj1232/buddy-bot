@@ -1,13 +1,17 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Send, Maximize, Minimize, MessageCircle, ArrowLeft } from 'lucide-react';
+import { Mic, MicOff, Send, Maximize, Minimize, Settings, ArrowLeft } from 'lucide-react';
 import RobotHead from './RobotHead';
 import { useToast } from '@/components/ui/use-toast';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useIsMobile } from '@/hooks/use-mobile';
 import type { RobotConfig } from './RobotBuilder';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { getEducationalResponse } from '@/services/aiService';
+import { textToSpeech } from '@/services/speechService';
+import { useApiKeys } from '@/hooks/use-api-keys';
+import ApiKeyConfig from './ApiKeyConfig';
 
 type RobotChatProps = {
   robotConfig: RobotConfig;
@@ -17,6 +21,7 @@ type RobotChatProps = {
 type Message = {
   content: string;
   isUser: boolean;
+  status?: 'pending' | 'complete' | 'error';
 };
 
 const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) => {
@@ -29,43 +34,22 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
   ]);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isTextExpanded, setIsTextExpanded] = useState(true);
+  const [apiConfigOpen, setApiConfigOpen] = useState(false);
+  const [processingMessage, setProcessingMessage] = useState(false);
+  
+  const { apiKeys, isConfigured } = useApiKeys();
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  const demoResponses = [
-    "The moon orbits around the Earth due to the gravitational pull between the two bodies. This gravitational interaction is what keeps the moon in its elliptical orbit and is the same force that keeps Earth orbiting the sun.",
-    "The process of photosynthesis allows plants to convert sunlight into energy. Plants use chlorophyll to capture sunlight and convert carbon dioxide and water into glucose and oxygen, which is essential for all life on Earth.",
-    "Dinosaurs lived during the Mesozoic Era, which includes the Triassic, Jurassic, and Cretaceous periods. They were the dominant terrestrial vertebrates for over 160 million years until their extinction 65 million years ago.",
-    "Atoms are made up of protons, neutrons, and electrons, which are the building blocks of matter. Protons and neutrons form the nucleus of an atom, while electrons orbit around the nucleus in specific energy levels.",
-    "The water cycle is the continuous movement of water through the Earth's atmosphere. It includes processes like evaporation, condensation, precipitation, infiltration, and transpiration, cycling water from the oceans to the land and back.",
-  ];
-
-  const getRandomResponse = () => {
-    return demoResponses[Math.floor(Math.random() * demoResponses.length)];
-  };
-
-  const speakText = (text: string) => {
-    setIsSpeaking(true);
-    
-    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-    let currentIndex = 0;
-    
-    const speakNextSentence = () => {
-      if (currentIndex < sentences.length) {
-        const speakTime = sentences[currentIndex].length * 50;
-        setTimeout(() => {
-          currentIndex++;
-          speakNextSentence();
-        }, speakTime);
-      } else {
-        setIsSpeaking(false);
-      }
-    };
-    
-    speakNextSentence();
-  };
+  // Check if API keys are configured on initial load
+  useEffect(() => {
+    if (!isConfigured) {
+      setApiConfigOpen(true);
+    }
+  }, [isConfigured]);
 
   const startRecording = async () => {
     try {
@@ -77,22 +61,9 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
         audioChunksRef.current.push(event.data);
       };
 
-      mediaRecorderRef.current.onstop = async () => {
-        setIsSpeaking(true);
-        
-        setTimeout(() => {
-          setIsSpeaking(false);
-          
-          const placeholderText = "How do plants make their own food?";
-          setUserMessage(placeholderText);
-          addMessage(placeholderText, true);
-          
-          setTimeout(() => {
-            const response = getRandomResponse();
-            addMessage(response, false);
-            speakText(response);
-          }, 1000);
-        }, 1500);
+      mediaRecorderRef.current.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current);
+        processAudioToText(audioBlob);
       };
 
       mediaRecorderRef.current.start();
@@ -127,18 +98,143 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     }
   };
 
+  const processAudioToText = async (audioBlob: Blob) => {
+    // In a real implementation, we would use a speech-to-text service here
+    // For now, we'll show a placeholder message to simulate processing
+    toast({
+      title: "Processing Speech",
+      description: "Converting your audio to text...",
+    });
+    
+    // Simulating speech recognition with a timeout
+    // In a real implementation, this would be replaced with an actual STT service call
+    setTimeout(() => {
+      const simulatedText = "How does photosynthesis work?";
+      setUserMessage(simulatedText);
+      sendMessage(simulatedText);
+    }, 1500);
+  };
+
   const sendTextMessage = () => {
     if (userMessage.trim()) {
-      addMessage(userMessage, true);
+      sendMessage(userMessage);
+      setUserMessage('');
+    }
+  };
+
+  const sendMessage = async (content: string) => {
+    if (!isConfigured) {
+      toast({
+        title: "API Keys Missing",
+        description: "Please configure your API keys first",
+        variant: "destructive"
+      });
+      setApiConfigOpen(true);
+      return;
+    }
+
+    // Add user message to chat
+    addMessage(content, true);
+    
+    // Set state to show loading
+    setProcessingMessage(true);
+
+    try {
+      // Add a pending bot message
+      const pendingMessageIndex = messages.length;
+      setMessages(prev => [...prev, { 
+        content: "Thinking...", 
+        isUser: false, 
+        status: 'pending' 
+      }]);
+
+      // Get response from AI service
+      const response = await getEducationalResponse(content, apiKeys.openai || '');
+      
+      // Replace the pending message with the actual response
+      setMessages(prev => {
+        const updatedMessages = [...prev];
+        updatedMessages[pendingMessageIndex] = { 
+          content: response, 
+          isUser: false,
+          status: 'complete'
+        };
+        return updatedMessages;
+      });
+
+      // Generate speech
+      speakText(response);
+    } catch (error) {
+      console.error('Error processing message:', error);
+      toast({
+        title: "Error",
+        description: "There was a problem processing your request",
+        variant: "destructive"
+      });
+      
+      // Update pending message to show error
+      setMessages(prev => {
+        const updatedMessages = [...prev];
+        const pendingIndex = updatedMessages.findIndex(
+          msg => msg.isUser === false && msg.status === 'pending'
+        );
+        
+        if (pendingIndex !== -1) {
+          updatedMessages[pendingIndex] = {
+            content: "Sorry, I couldn't process your question. Please try again.",
+            isUser: false,
+            status: 'error'
+          };
+        }
+        
+        return updatedMessages;
+      });
+    } finally {
+      setProcessingMessage(false);
+    }
+  };
+
+  const speakText = async (text: string) => {
+    try {
       setIsSpeaking(true);
       
-      setUserMessage('');
+      // Stop any currently playing audio
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current = null;
+      }
       
-      setTimeout(() => {
-        const response = getRandomResponse();
-        addMessage(response, false);
-        speakText(response);
-      }, 1500);
+      // Generate speech audio from text
+      const audio = await textToSpeech(text, apiKeys.elevenlabs || '');
+      currentAudioRef.current = audio;
+      
+      // Play the audio and animate mouth
+      audio.play();
+      
+      // When audio ends, stop speaking animation
+      audio.onended = () => {
+        setIsSpeaking(false);
+        currentAudioRef.current = null;
+      };
+      
+      // If there's an error, stop speaking animation
+      audio.onerror = () => {
+        setIsSpeaking(false);
+        currentAudioRef.current = null;
+        toast({
+          title: "Audio Error",
+          description: "Couldn't play the speech audio",
+          variant: "destructive"
+        });
+      };
+    } catch (error) {
+      console.error('Error speaking text:', error);
+      setIsSpeaking(false);
+      toast({
+        title: "Speech Error",
+        description: "Couldn't generate the speech audio",
+        variant: "destructive"
+      });
     }
   };
 
@@ -153,6 +249,7 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     }
   };
 
+  // Scroll to bottom when messages change
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -187,6 +284,16 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
         </div>
       </div>
       
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={() => setApiConfigOpen(true)}
+        className="w-auto self-end mb-2 border-robot-purple text-robot-purple hover:bg-robot-purple hover:text-white cyber-button"
+      >
+        <Settings className="mr-1 h-3 w-3" />
+        <span className="text-sm">{isConfigured ? "API Settings" : "Configure APIs"}</span>
+      </Button>
+      
       <Collapsible
         open={isTextExpanded}
         onOpenChange={setIsTextExpanded}
@@ -198,12 +305,12 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
               {isTextExpanded ? (
                 <>
                   <Minimize className="h-4 w-4" />
-                  <span>Hide Chat</span>
+                  <span className="text-sm">Hide Chat</span>
                 </>
               ) : (
                 <>
                   <Maximize className="h-4 w-4" />
-                  <span>Show Chat</span>
+                  <span className="text-sm">Show Chat</span>
                 </>
               )}
             </Button>
@@ -227,9 +334,16 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
                   className={`mb-2 p-2 rounded-lg ${message.isUser ? 
                     'bg-robot-blue/20 border border-robot-blue text-white ml-auto max-w-[80%]' : 
                     'bg-robot-dark border border-robot-metal text-white mr-auto max-w-[80%]'
-                  }`}
+                  } ${message.status === 'pending' ? 'animate-pulse' : ''}`}
                 >
                   <p>{message.content}</p>
+                  {message.status === 'pending' && (
+                    <div className="flex justify-center space-x-1 mt-1">
+                      <div className="w-1.5 h-1.5 bg-robot-metal rounded-full animate-bounce"></div>
+                      <div className="w-1.5 h-1.5 bg-robot-metal rounded-full animate-bounce delay-100"></div>
+                      <div className="w-1.5 h-1.5 bg-robot-metal rounded-full animate-bounce delay-200"></div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -244,13 +358,14 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
                 onKeyDown={handleKeyPress}
                 placeholder="Type your question..."
                 className="flex-grow p-2 bg-robot-dark border border-robot-metal rounded-lg text-white cyber-input"
-                disabled={recording}
+                disabled={recording || processingMessage}
               />
               
               <Button
                 variant="outline"
                 size="icon"
                 onClick={recording ? stopRecording : startRecording}
+                disabled={processingMessage}
                 className={recording ? 'bg-red-500 text-white hover:bg-red-600 cyber-button pulse-red' : 'bg-robot-blue text-white hover:bg-robot-purple cyber-button'}
               >
                 {recording ? <MicOff /> : <Mic />}
@@ -260,7 +375,7 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
                 variant="outline"
                 size="icon"
                 onClick={sendTextMessage}
-                disabled={!userMessage.trim() || recording}
+                disabled={!userMessage.trim() || recording || processingMessage}
                 className="bg-robot-blue text-white hover:bg-robot-purple cyber-button"
               >
                 <Send />
@@ -276,6 +391,7 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
             variant="outline" 
             size="lg"
             onClick={() => setRecording(prevRecording => !prevRecording)}
+            disabled={processingMessage}
             className={`rounded-full p-6 ${recording ? 'bg-red-500 text-white hover:bg-red-600 pulse-red' : 'bg-robot-blue text-white hover:bg-robot-purple'}`}
           >
             {recording ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
@@ -289,8 +405,10 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
         className="w-full mt-4 border-robot-blue text-robot-blue hover:bg-robot-blue hover:text-white cyber-button"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to Builder
+        <span className="text-sm">Back to Builder</span>
       </Button>
+      
+      <ApiKeyConfig open={apiConfigOpen} onOpenChange={setApiConfigOpen} />
     </div>
   );
 };

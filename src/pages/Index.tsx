@@ -1,14 +1,25 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RobotBuilder, { RobotConfig } from '@/components/RobotBuilder';
 import RobotChat from '@/components/RobotChat';
 import { Toaster } from '@/components/ui/toaster';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useApiKeys } from '@/hooks/use-api-keys';
+import ApiKeyConfig from '@/components/ApiKeyConfig';
 
 const Index = () => {
   const isMobile = useIsMobile();
   const [robotComplete, setRobotComplete] = useState(false);
   const [robotConfig, setRobotConfig] = useState<RobotConfig | null>(null);
+  const [showApiConfig, setShowApiConfig] = useState(false);
+  const { isConfigured } = useApiKeys();
+
+  // Check if API keys are configured when user completes robot
+  useEffect(() => {
+    if (robotComplete && !isConfigured) {
+      setShowApiConfig(true);
+    }
+  }, [robotComplete, isConfigured]);
 
   const handleRobotComplete = (config: RobotConfig) => {
     setRobotConfig(config);
@@ -58,6 +69,7 @@ const Index = () => {
       </footer>
 
       <Toaster />
+      <ApiKeyConfig open={showApiConfig} onOpenChange={setShowApiConfig} />
     </div>
   );
 };
