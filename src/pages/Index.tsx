@@ -6,13 +6,15 @@ import { Toaster } from '@/components/ui/toaster';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useApiKeys } from '@/hooks/use-api-keys';
 import ApiKeyConfig from '@/components/ApiKeyConfig';
+import websocketService from '@/services/websocketService';
 
 const Index = () => {
   const isMobile = useIsMobile();
   const [robotComplete, setRobotComplete] = useState(false);
   const [robotConfig, setRobotConfig] = useState<RobotConfig | null>(null);
   const [showApiConfig, setShowApiConfig] = useState(false);
-  const { isConfigured } = useApiKeys();
+  const { isConfigured, apiKeys } = useApiKeys();
+  const [connectionStatus, setConnectionStatus] = useState(websocketService.getStatus());
 
   // Check if API keys are configured when user completes robot
   useEffect(() => {
@@ -20,6 +22,25 @@ const Index = () => {
       setShowApiConfig(true);
     }
   }, [robotComplete, isConfigured]);
+
+  // Monitor WebSocket connection status
+  useEffect(() => {
+    const checkConnectionStatus = () => {
+      setConnectionStatus(websocketService.getStatus());
+    };
+    
+    // Check connection status every 2 seconds
+    const interval = setInterval(checkConnectionStatus, 2000);
+    
+    // Connect to WebSocket if using default server
+    if (apiKeys.useDefaultServer) {
+      websocketService.connect().catch(console.error);
+    }
+    
+    return () => {
+      clearInterval(interval);
+    };
+  }, [apiKeys.useDefaultServer]);
 
   const handleRobotComplete = (config: RobotConfig) => {
     setRobotConfig(config);
@@ -46,6 +67,13 @@ const Index = () => {
             Robo-Builder Communicator
           </h1>
         </header>
+      )}
+      
+      {apiKeys.useDefaultServer && (
+        <div 
+          className={`connection-status ${connectionStatus}`}
+          title={`Server connection: ${connectionStatus}`}
+        ></div>
       )}
       
       <main className={`flex-grow ${robotComplete ? 'pt-2 sm:pt-4' : ''}`}>

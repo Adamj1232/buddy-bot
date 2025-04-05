@@ -55,5 +55,60 @@
   [data-antenna-type="combat"] {
     margin-top: 1.5rem;
   }
+  
+  /* Better spacing for mobile interfaces */
+  #root {
+    padding: 1rem;
+    max-width: 100%;
+  }
+  
+  /* Ensure buttons have proper touch targets */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve chat container on small screens */
+  .robot-message-container {
+    max-height: 35vh;
+  }
 }
 
+/* WebSocket connection status indicators */
+.connection-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.connection-status.connected {
+  background-color: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.connection-status.connecting {
+  background-color: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+  animation: pulse 1.5s infinite;
+}
+
+.connection-status.disconnected,
+.connection-status.error {
+  background-color: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}

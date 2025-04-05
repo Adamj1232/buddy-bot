@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Send, Maximize, Minimize, Settings, ArrowLeft } from 'lucide-react';
@@ -12,6 +11,7 @@ import { getEducationalResponse } from '@/services/aiService';
 import { textToSpeech } from '@/services/speechService';
 import { useApiKeys } from '@/hooks/use-api-keys';
 import ApiKeyConfig from './ApiKeyConfig';
+import { websocketService } from '@/services/websocketService';
 
 type RobotChatProps = {
   robotConfig: RobotConfig;
@@ -49,7 +49,26 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
     if (!isConfigured) {
       setApiConfigOpen(true);
     }
-  }, [isConfigured]);
+    
+    // Connect to WebSocket if using default server
+    if (apiKeys.useDefaultServer) {
+      websocketService.connect().catch(error => {
+        console.error("Failed to connect to WebSocket:", error);
+        toast({
+          title: "Connection Error",
+          description: "Could not connect to the server. Please try again later.",
+          variant: "destructive"
+        });
+      });
+    }
+    
+    // Cleanup WebSocket connection when component unmounts
+    return () => {
+      if (apiKeys.useDefaultServer) {
+        websocketService.disconnect();
+      }
+    };
+  }, [isConfigured, apiKeys.useDefaultServer]);
 
   const startRecording = async () => {
     try {
@@ -149,7 +168,11 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
       }]);
 
       // Get response from AI service
-      const response = await getEducationalResponse(content, apiKeys.openai || '');
+      const response = await getEducationalResponse(
+        content, 
+        apiKeys.openai, 
+        apiKeys.useDefaultServer
+      );
       
       // Replace the pending message with the actual response
       setMessages(prev => {
@@ -168,7 +191,7 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
       console.error('Error processing message:', error);
       toast({
         title: "Error",
-        description: "There was a problem processing your request",
+        description: error instanceof Error ? error.message : "There was a problem processing your request",
         variant: "destructive"
       });
       
@@ -367,7 +390,7 @@ const RobotChat: React.FC<RobotChatProps> = ({ robotConfig, onBackToBuilder }) =
                 size="icon"
                 onClick={recording ? stopRecording : startRecording}
                 disabled={processingMessage}
-                className={recording ? 'bg-red-500 text-white hover:bg-red-600 cyber-button pulse-red' : 'bg-robot-blue text-white hover:bg-robot-purple cyber-button'}
+                className={recording ? 'bg-red-500 text-white hover:bg-red-600 pulse-red' : 'bg-robot-blue text-white hover:bg-robot-purple cyber-button'}
               >
                 {recording ? <MicOff /> : <Mic />}
               </Button>
