@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +7,8 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import { useEffect, useState } from "react";
+import buddyBotWebSocketService from "@/services/buddyBotWebSocketService";
+import { authService } from "@/services/authService";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,34 @@ const App = () => {
     // Check if user is logged in from session storage
     const loggedInStatus = sessionStorage.getItem('isLoggedIn') === 'true';
     setIsLoggedIn(loggedInStatus || isLoginDisabled);
+    
+    // Log the authentication status
+    console.log('User login status:', loggedInStatus ? 'Logged in' : 'Not logged in');
+    console.log('Login disabled:', isLoginDisabled);
+    
+    // If logged in, try to connect WebSocket
+    if (loggedInStatus) {
+      const token = authService.getToken();
+      console.log('User has token:', !!token);
+      
+      if (token) {
+        // Connect WebSocket
+        buddyBotWebSocketService.connect()
+          .then(() => {
+            console.log('WebSocket connected in App component');
+            buddyBotWebSocketService.authenticate(token);
+          })
+          .catch(error => {
+            console.error('WebSocket connection failed in App component:', error);
+          });
+      }
+    }
+    
+    // Cleanup function to disconnect WebSocket when component unmounts
+    return () => {
+      console.log('App component unmounting, cleaning up WebSocket');
+      buddyBotWebSocketService.disconnect();
+    };
   }, []);
 
   // Protected route component

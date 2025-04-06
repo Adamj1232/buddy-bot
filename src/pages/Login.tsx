@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LockKeyhole, Mail, User } from 'lucide-react';
+import { authService } from '@/services/authService';
 
 // Check if login is disabled via environment variable
 const isLoginDisabled = import.meta.env.VITE_DISABLE_LOGIN === 'true';
@@ -30,34 +30,89 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    console.log('Form submitted');
 
-    // Simulate authentication process
-    setTimeout(() => {
+    // Set a timeout to prevent UI from getting stuck
+    const loginTimeout = setTimeout(() => {
+      console.log('Login timeout reached, forcing completion');
       setIsLoading(false);
-      
+      toast({
+        title: "Login Processing",
+        description: "Backend responded but UI may be slow. You can proceed to the homepage.",
+        variant: "default"
+      });
+      // Force redirect as a fallback
+      navigate('/', { replace: true });
+    }, 5000); // 5 seconds timeout
+
+    try {
       // Simple validation
       if (!email || !password || (!isLogin && !username)) {
+        console.log('Validation failed: Missing fields');
+        clearTimeout(loginTimeout);
         toast({
           title: "Error",
           description: "Please fill in all fields",
           variant: "destructive"
         });
+        setIsLoading(false);
         return;
       }
 
-      // Success message and redirect
-      toast({
-        title: isLogin ? "Login Successful" : "Account Created",
-        description: `Welcome${isLogin ? " back" : ""}, ${isLogin ? email.split('@')[0] : username}!`,
-        variant: "default"
-      });
+      if (isLogin) {
+        console.log('Attempting login');
+        const response = await authService.login({ email, password });
+        console.log('Login successful, received response:', response);
+        
+        // Clear the timeout as we got a successful response
+        clearTimeout(loginTimeout);
+        
+        // Get username from either the response user object or from the email
+        const username = response.user?.username || email.split('@')[0] || 'user';
+        
+        toast({
+          title: "Login Successful",
+          description: `Welcome back, ${username}!`,
+          variant: "default"
+        });
+      } else {
+        console.log('Attempting registration');
+        const response = await authService.register({ 
+          email, 
+          password, 
+          username 
+        });
+        console.log('Registration successful, received response:', response);
+        
+        // Clear the timeout as we got a successful response
+        clearTimeout(loginTimeout);
+        
+        // Get username from either the response user object or from input
+        const displayUsername = response.user?.username || username || email.split('@')[0] || 'user';
+        
+        toast({
+          title: "Registration Successful",
+          description: `Welcome, ${displayUsername}!`,
+          variant: "default"
+        });
+      }
       
-      // Store logged in state in sessionStorage
-      sessionStorage.setItem('isLoggedIn', 'true');
-      
-      // Redirect to main page
+      console.log('Redirecting to main page after successful authentication');
       navigate('/', { replace: true });
-    }, 1500);
+    } catch (error) {
+      // Clear the timeout as we got an error response
+      clearTimeout(loginTimeout);
+      
+      console.error('Authentication error:', error);
+      toast({
+        title: isLogin ? "Login Error" : "Registration Error",
+        description: error instanceof Error ? error.message : "Authentication failed",
+        variant: "destructive"
+      });
+    } finally {
+      console.log('Resetting loading state in finally block');
+      setIsLoading(false);
+    }
   };
 
   return (

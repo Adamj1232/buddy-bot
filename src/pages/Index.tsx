@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RobotBuilder, { RobotConfig } from '@/components/RobotBuilder';
@@ -7,7 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useApiKeys } from '@/hooks/use-api-keys';
 import ApiKeyConfig from '@/components/ApiKeyConfig';
-import websocketService from '@/services/websocketService';
+import buddyBotWebSocketService, { WebSocketStatus } from '@/services/buddyBotWebSocketService';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 
@@ -18,7 +17,7 @@ const Index = () => {
   const [robotConfig, setRobotConfig] = useState<RobotConfig | null>(null);
   const [showApiConfig, setShowApiConfig] = useState(false);
   const { isConfigured, apiKeys } = useApiKeys();
-  const [connectionStatus, setConnectionStatus] = useState(websocketService.getStatus());
+  const [connectionStatus, setConnectionStatus] = useState<WebSocketStatus>(buddyBotWebSocketService.getStatus());
 
   // Check if API keys are configured when user completes robot
   useEffect(() => {
@@ -30,21 +29,29 @@ const Index = () => {
   // Monitor WebSocket connection status
   useEffect(() => {
     const checkConnectionStatus = () => {
-      setConnectionStatus(websocketService.getStatus());
+      setConnectionStatus(buddyBotWebSocketService.getStatus());
     };
     
     // Check connection status every 2 seconds
     const interval = setInterval(checkConnectionStatus, 2000);
     
+    // Set up a listener for connection status changes
+    buddyBotWebSocketService.onStatusChange((status) => {
+      setConnectionStatus(status);
+    });
+    
     // Connect to WebSocket if using default server
-    if (apiKeys.useDefaultServer) {
-      websocketService.connect().catch(console.error);
+    if (apiKeys.useDefaultServer || isConfigured) {
+      console.log('Attempting to connect to WebSocket server...');
+      buddyBotWebSocketService.connect().catch(err => {
+        console.error('Failed to connect to WebSocket server:', err);
+      });
     }
     
     return () => {
       clearInterval(interval);
     };
-  }, [apiKeys.useDefaultServer]);
+  }, [apiKeys.useDefaultServer, isConfigured]);
 
   const handleRobotComplete = (config: RobotConfig) => {
     setRobotConfig(config);
@@ -60,6 +67,40 @@ const Index = () => {
     sessionStorage.removeItem('isLoggedIn');
     // Redirect to login page
     navigate('/login', { replace: true });
+  };
+
+  // Function to get color class based on connection status
+  const getStatusColor = (status: WebSocketStatus) => {
+    switch (status) {
+      case 'connected':
+        return 'bg-yellow-400';
+      case 'authenticated':
+        return 'bg-green-400';
+      case 'connecting':
+        return 'bg-blue-400 animate-pulse';
+      case 'error':
+        return 'bg-red-500';
+      case 'disconnected':
+      default:
+        return 'bg-gray-400';
+    }
+  };
+
+  // Function to get status title
+  const getStatusTitle = (status: WebSocketStatus) => {
+    switch (status) {
+      case 'connected':
+        return 'Connected (not authenticated)';
+      case 'authenticated':
+        return 'Connected and authenticated';
+      case 'connecting':
+        return 'Connecting...';
+      case 'error':
+        return 'Connection error';
+      case 'disconnected':
+      default:
+        return 'Disconnected';
+    }
   };
 
   return (
@@ -80,7 +121,7 @@ const Index = () => {
             </div>
             
             <h1 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold text-center steampunk-title relative inline-block mx-auto`}>
-              Robo-Builder Communicator
+              Buddy Bot
             </h1>
             
             <Button 
@@ -96,12 +137,10 @@ const Index = () => {
         </header>
       )}
       
-      {apiKeys.useDefaultServer && (
-        <div 
-          className={`connection-status ${connectionStatus}`}
-          title={`Server connection: ${connectionStatus}`}
-        ></div>
-      )}
+      <div 
+        className={`connection-status ${getStatusColor(connectionStatus)}`}
+        title={getStatusTitle(connectionStatus)}
+      ></div>
       
       <main className={`flex-grow ${robotComplete ? 'pt-2 sm:pt-4' : ''}`}>
         {robotComplete && robotConfig ? (

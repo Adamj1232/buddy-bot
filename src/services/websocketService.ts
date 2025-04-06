@@ -1,4 +1,3 @@
-
 type WebSocketStatus = 'connecting' | 'connected' | 'disconnected' | 'error';
 type MessageHandler = (data: any) => void;
 
@@ -18,7 +17,7 @@ class WebSocketService {
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private url: string;
 
-  constructor(url: string = 'wss://api.example.com/ws') {
+  constructor(url: string = import.meta.env.VITE_WS_SERVER_URL) {
     this.url = url;
   }
 
