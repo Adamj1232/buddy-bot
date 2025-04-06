@@ -82,6 +82,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  padding: 16px;
 }
 
 .connection-status.connected {

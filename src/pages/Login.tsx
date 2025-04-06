@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LockKeyhole, Mail, User } from 'lucide-react';
-import { authService } from '@/services/authService';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Check if login is disabled via environment variable
 const isLoginDisabled = import.meta.env.VITE_DISABLE_LOGIN === 'true';
@@ -18,12 +18,22 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [redirectToHome, setRedirectToHome] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { isLoggedIn, login, register, updateLoginStatus } = useAuth();
 
-  // If login is disabled, redirect to main page
-  if (isLoginDisabled) {
+  // Check if already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      console.log('User already logged in, redirecting to home');
+      setRedirectToHome(true);
+    }
+  }, [isLoggedIn]);
+
+  // If login is disabled or user is already logged in, redirect to main page
+  if (isLoginDisabled || redirectToHome) {
     return <Navigate to="/" replace />;
   }
 
@@ -32,7 +42,7 @@ const Login = () => {
     setIsLoading(true);
     console.log('Form submitted');
 
-    // Set a timeout to prevent UI from getting stuck
+    // Reduce the timeout to 3 seconds for a better user experience
     const loginTimeout = setTimeout(() => {
       console.log('Login timeout reached, forcing completion');
       setIsLoading(false);
@@ -41,9 +51,16 @@ const Login = () => {
         description: "Backend responded but UI may be slow. You can proceed to the homepage.",
         variant: "default"
       });
-      // Force redirect as a fallback
-      navigate('/', { replace: true });
-    }, 5000); // 5 seconds timeout
+      
+      // Set isLoggedIn in AuthContext manually and then navigate
+      // This helps when there's a race condition between the API response and navigation
+      updateLoginStatus(true);
+      
+      // Short delay before navigation to ensure context updates
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 100);
+    }, 3000); // 3 seconds timeout
 
     try {
       // Simple validation
@@ -60,45 +77,46 @@ const Login = () => {
       }
 
       if (isLogin) {
-        console.log('Attempting login');
-        const response = await authService.login({ email, password });
+        console.log('Attempting login with AuthContext');
+        const response = await login(email, password);
         console.log('Login successful, received response:', response);
         
         // Clear the timeout as we got a successful response
         clearTimeout(loginTimeout);
         
         // Get username from either the response user object or from the email
-        const username = response.user?.username || email.split('@')[0] || 'user';
+        const displayName = response.user?.username || email.split('@')[0] || 'user';
         
         toast({
           title: "Login Successful",
-          description: `Welcome back, ${username}!`,
+          description: `Welcome back, ${displayName}!`,
           variant: "default"
         });
+        
+        // Ensure context update before navigation
+        setTimeout(() => {
+          navigate('/', { replace: true });
+        }, 100);
       } else {
-        console.log('Attempting registration');
-        const response = await authService.register({ 
-          email, 
-          password, 
-          username 
-        });
+        console.log('Attempting registration with AuthContext');
+        const response = await register(email, password, username);
         console.log('Registration successful, received response:', response);
         
         // Clear the timeout as we got a successful response
         clearTimeout(loginTimeout);
         
         // Get username from either the response user object or from input
-        const displayUsername = response.user?.username || username || email.split('@')[0] || 'user';
+        const displayName = response.user?.username || username || email.split('@')[0] || 'user';
         
         toast({
           title: "Registration Successful",
-          description: `Welcome, ${displayUsername}!`,
+          description: `Welcome, ${displayName}!`,
           variant: "default"
         });
+        
+        // Explicit navigate instead of relying on redirectToHome
+        navigate('/', { replace: true });
       }
-      
-      console.log('Redirecting to main page after successful authentication');
-      navigate('/', { replace: true });
     } catch (error) {
       // Clear the timeout as we got an error response
       clearTimeout(loginTimeout);
