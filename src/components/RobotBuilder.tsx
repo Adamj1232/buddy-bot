@@ -3,9 +3,9 @@ import RobotHead from './RobotHead';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
-import { ChevronDown } from 'lucide-react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { ChevronRight, ChevronLeft, ChevronDown, Check } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type RobotBuilderProps = {
   onRobotComplete: (robotConfig: RobotConfig) => void;
@@ -23,10 +23,29 @@ export type RobotConfig = {
   name: string;
 };
 
+// Define steps for the builder process
+type BuilderStep = {
+  id: string;
+  title: string;
+  description: string;
+};
+
 const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [robotName, setRobotName] = useState('');
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  
+  const steps: BuilderStep[] = [
+    { id: 'name', title: 'Name Your Robot', description: 'Give your robot assistant a name' },
+    { id: 'head', title: 'Head Design', description: 'Select the head shape, texture, and color' },
+    { id: 'eyes', title: 'Eyes', description: 'Choose eye style and color' },
+    { id: 'mouth', title: 'Mouth', description: 'Pick a mouth style and animation' },
+    { id: 'antenna', title: 'Antenna', description: 'Add an antenna to your robot' },
+    { id: 'complete', title: 'Complete', description: 'Your robot is ready!' },
+  ];
+  
   const [robotConfig, setRobotConfig] = useState<RobotConfig>({
     headType: 'square',
     eyeType: 'round',
@@ -80,9 +99,10 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
     setRobotConfig(prev => ({ ...prev, [part]: value }));
   };
   
-  // Complete robot building
-  const finishRobot = () => {
-    if (!robotName.trim()) {
+  // Navigation functions
+  const goToNextStep = () => {
+    // Validate name step
+    if (currentStepIndex === 0 && !robotName.trim()) {
       toast({
         title: "Name Required",
         description: "Please give your robot a name",
@@ -91,13 +111,257 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
       return;
     }
     
-    const completeConfig = { ...robotConfig, name: robotName };
-    setRobotConfig(completeConfig);
-    onRobotComplete(completeConfig);
+    // If on name step, update the name in config
+    if (currentStepIndex === 0) {
+      setRobotConfig(prev => ({ ...prev, name: robotName }));
+    }
+    
+    // If on last step, complete the build
+    if (currentStepIndex === steps.length - 1) {
+      finishRobot();
+      return;
+    }
+    
+    setDirection(1);
+    setCurrentStepIndex(prev => Math.min(prev + 1, steps.length - 1));
+  };
+  
+  const goToPrevStep = () => {
+    setDirection(-1);
+    setCurrentStepIndex(prev => Math.max(prev - 1, 0));
+  };
+  
+  // Complete robot building
+  const finishRobot = () => {
+    onRobotComplete(robotConfig);
+  };
+
+  // Animation variants
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? '100%' : '-100%',
+      opacity: 0
+    }),
+    center: {
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? '100%' : '-100%',
+      opacity: 0
+    })
+  };
+  
+  // Render step content based on current step
+  const renderStepContent = () => {
+    const step = steps[currentStepIndex];
+    
+    switch (step.id) {
+      case 'name':
+        return (
+          <div className="space-y-4">
+            <div className="cyber-input-container">
+              <Input
+                type="text"
+                value={robotName}
+                onChange={(e) => setRobotName(e.target.value)}
+                placeholder="Enter robot name..."
+                className="w-full p-2 bg-robot-dark border border-robot-metal rounded-lg text-white cyber-input"
+              />
+            </div>
+          </div>
+        );
+        
+      case 'head':
+        return (
+          <div className="grid grid-cols-1 gap-6">
+            <div>
+              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+                {headOptions.map(option => (
+                  <button
+                    key={option}
+                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.headType === option ? 'bg-robot-blue text-black' : ''}`}
+                    onClick={() => updateRobotPart('headType', option)}
+                  >
+                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+                {textureOptions.map(option => (
+                  <button
+                    key={option}
+                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.headTexture === option ? 'bg-robot-blue text-black' : ''}`}
+                    onClick={() => updateRobotPart('headTexture', option)}
+                  >
+                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-robot-blue mb-2">Head Color</label>
+              <div className="flex gap-3 flex-wrap justify-center">
+                {headColors.map(({ name, color }) => (
+                  <button
+                    key={color}
+                    className="color-button relative w-8 h-8 rounded-full border-2 border-transparent hover:border-robot-accent focus:outline-none focus:border-robot-accent transition-colors duration-200 z-10"
+                    style={{ backgroundColor: color }}
+                    title={name}
+                    onClick={() => updateRobotPart('headColor', color)}
+                  >
+                    {robotConfig.headColor === color && (
+                      <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span className="w-3 h-3 bg-white rounded-full border border-robot-dark"></span>
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'eyes':
+        return (
+          <div className="grid grid-cols-1 gap-6">
+            <div>
+              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+                {eyeOptions.map(option => (
+                  <button
+                    key={option}
+                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.eyeType === option ? 'bg-robot-blue text-black' : ''}`}
+                    onClick={() => updateRobotPart('eyeType', option)}
+                  >
+                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-robot-blue mb-2">Eye Color</label>
+              <div className="flex gap-3 flex-wrap justify-center">
+                {eyeColors.map(({ name, color }) => (
+                  <button
+                    key={color}
+                    className="color-button relative w-8 h-8 rounded-full border-2 border-transparent hover:border-robot-accent focus:outline-none focus:border-robot-accent transition-colors duration-200 z-10"
+                    style={{ backgroundColor: color }}
+                    title={name}
+                    onClick={() => updateRobotPart('eyeColor', color)}
+                  >
+                    {robotConfig.eyeColor === color && (
+                      <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span className="w-3 h-3 bg-robot-dark rounded-full border border-white"></span>
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'mouth':
+        return (
+          <div className="grid grid-cols-1 gap-6">
+            <div>
+              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+                {mouthOptions.map(option => (
+                  <button
+                    key={option}
+                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.mouthType === option ? 'bg-robot-blue text-black' : ''}`}
+                    onClick={() => updateRobotPart('mouthType', option)}
+                  >
+                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+                {mouthAnimOptions.map(option => (
+                  <button
+                    key={option}
+                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.mouthAnimation === option ? 'bg-robot-blue text-black' : ''}`}
+                    onClick={() => updateRobotPart('mouthAnimation', option)}
+                  >
+                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'antenna':
+        return (
+          <div>
+            <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+              {antennaOptions.map(option => (
+                <button
+                  key={option}
+                  className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.antennaType === option ? 'bg-robot-blue text-black' : ''}`}
+                  onClick={() => updateRobotPart('antennaType', option)}
+                >
+                  {option.charAt(0).toUpperCase() + option.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+        
+      case 'complete':
+        return (
+          <div className="text-center space-y-4">
+            <div className="text-robot-blue font-medium">
+              <p>Your robot assistant is ready to go!</p>
+              <p className="text-xl mt-2 font-bold">{robotConfig.name}</p>
+            </div>
+            <div className="w-full">
+              <Button 
+                className="w-full cyber-button" 
+                onClick={finishRobot}
+              >
+                <Check className="mr-2 h-4 w-4" />
+                <span className="relative z-10">Finish</span>
+              </Button>
+            </div>
+          </div>
+        );
+        
+      default:
+        return null;
+    }
+  };
+  
+  // Progress indicators
+  const renderProgressIndicators = () => {
+    return (
+      <div className="flex justify-center gap-2 mb-4">
+        {steps.map((step, index) => (
+          <div
+            key={step.id}
+            className={`h-2 w-2 rounded-full transition-all duration-300 ${
+              index === currentStepIndex
+                ? 'bg-robot-blue w-6'
+                : index < currentStepIndex
+                ? 'bg-robot-blue'
+                : 'bg-robot-metal/50'
+            }`}
+          />
+        ))}
+      </div>
+    );
   };
   
   return (
-    <div className="p-2 sm:p-4 max-w-md mx-auto relative">
+    <div className="p-2 sm:p-4 max-w-md mx-auto relative overflow-hidden">
       <div className="steampunk-cog w-32 h-32 top-0 right-0 rotate-12 opacity-10"></div>
       <div className="steampunk-cog w-24 h-24 bottom-0 left-0 -rotate-12 opacity-10"></div>
       
@@ -122,199 +386,61 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         </div>
       </div>
       
-      <Accordion type="single" collapsible className="mb-4 rounded-lg overflow-hidden border-2 border-robot-metal/50 steampunk-panel">
-        <AccordionItem value="robotName" className="border-none">
-          <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
-            <span className="flex items-center gap-2">
-              <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              <span className="text-base sm:text-lg font-semibold">Robot Name</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="bg-robot-dark/60 p-3">
-            <div className="cyber-input-container">
-              <Input
-                type="text"
-                value={robotName}
-                onChange={(e) => setRobotName(e.target.value)}
-                placeholder="Enter robot name..."
-                className="w-full p-2 bg-robot-dark border border-robot-metal rounded-lg text-white cyber-input"
-              />
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="headSection" className="border-none">
-          <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
-            <span className="flex items-center gap-2">
-              <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              <span className="text-base sm:text-lg font-semibold">Head Design</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="bg-robot-dark/60 p-3">
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-robot-blue mb-2">Head Shape</label>
-                <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
-                  {headOptions.map(option => (
-                    <button
-                      key={option}
-                      className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.headType === option ? 'bg-robot-blue text-black' : ''}`}
-                      onClick={() => updateRobotPart('headType', option)}
-                    >
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-robot-blue mb-2">Texture</label>
-                <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
-                  {textureOptions.map(option => (
-                    <button
-                      key={option}
-                      className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.headTexture === option ? 'bg-robot-blue text-black' : ''}`}
-                      onClick={() => updateRobotPart('headTexture', option)}
-                    >
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-robot-blue mb-2">Head Color</label>
-                <div className="flex gap-2 flex-wrap justify-center">
-                  {headColors.map(({ name, color }) => (
-                    <button
-                      key={color}
-                      className="color-button relative"
-                      style={{ backgroundColor: color }}
-                      title={name}
-                      onClick={() => updateRobotPart('headColor', color)}
-                    >
-                      {robotConfig.headColor === color && (
-                        <span className="absolute inset-0 flex items-center justify-center">
-                          <span className="w-2 h-2 bg-white rounded-full"></span>
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="featuresSection" className="border-none">
-          <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
-            <span className="flex items-center gap-2">
-              <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              <span className="text-base sm:text-lg font-semibold">Face Features</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="bg-robot-dark/60 p-3">
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-robot-blue mb-2">Eyes</label>
-                <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
-                  {eyeOptions.map(option => (
-                    <button
-                      key={option}
-                      className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.eyeType === option ? 'bg-robot-blue text-black' : ''}`}
-                      onClick={() => updateRobotPart('eyeType', option)}
-                    >
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-robot-blue mb-2">Eye Color</label>
-                <div className="flex gap-2 flex-wrap justify-center">
-                  {eyeColors.map(({ name, color }) => (
-                    <button
-                      key={color}
-                      className="color-button relative"
-                      style={{ backgroundColor: color }}
-                      title={name}
-                      onClick={() => updateRobotPart('eyeColor', color)}
-                    >
-                      {robotConfig.eyeColor === color && (
-                        <span className="absolute inset-0 flex items-center justify-center">
-                          <span className="w-2 h-2 bg-robot-dark rounded-full"></span>
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-robot-blue mb-2">Mouth</label>
-                <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
-                  {mouthOptions.map(option => (
-                    <button
-                      key={option}
-                      className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.mouthType === option ? 'bg-robot-blue text-black' : ''}`}
-                      onClick={() => updateRobotPart('mouthType', option)}
-                    >
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-robot-blue mb-2">Mouth Animation</label>
-                <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
-                  {mouthAnimOptions.map(option => (
-                    <button
-                      key={option}
-                      className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.mouthAnimation === option ? 'bg-robot-blue text-black' : ''}`}
-                      onClick={() => updateRobotPart('mouthAnimation', option)}
-                    >
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="antennaSection" className="border-none">
-          <AccordionTrigger className="bg-robot-dark/80 p-3 hover:bg-robot-dark/90 text-robot-blue">
-            <span className="flex items-center gap-2">
-              <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
-              <span className="text-base sm:text-lg font-semibold">Antenna</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="bg-robot-dark/60 p-3">
-            <div>
-              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
-                {antennaOptions.map(option => (
-                  <button
-                    key={option}
-                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[45%]' : 'flex-1'} ${robotConfig.antennaType === option ? 'bg-robot-blue text-black' : ''}`}
-                    onClick={() => updateRobotPart('antennaType', option)}
-                  >
-                    {option.charAt(0).toUpperCase() + option.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      {renderProgressIndicators()}
       
-      <button
-        className="build-finish-btn w-full cyber-button"
-        onClick={finishRobot}
-      >
-        <span className="relative z-10">Build Robot!</span>
-      </button>
+      <div className="mb-4 rounded-lg overflow-hidden border-2 border-robot-metal/50 steampunk-panel">
+        <div className="bg-robot-dark/80 p-3 text-robot-blue">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 bg-robot-blue rounded-full animate-pulse"></span>
+            <span className="text-base sm:text-lg font-semibold">{steps[currentStepIndex].title}</span>
+          </div>
+          <div className="text-xs text-robot-blue/70 mt-1">
+            {steps[currentStepIndex].description}
+          </div>
+        </div>
+        
+        <div className="bg-robot-dark/60 p-4 relative overflow-hidden min-h-[320px]">
+          <AnimatePresence custom={direction} initial={false}>
+            <motion.div
+              key={currentStepIndex}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 }
+              }}
+              className="w-full relative"
+            >
+              {renderStepContent()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+      
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          className={`cyber-button-secondary ${currentStepIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          onClick={goToPrevStep}
+          disabled={currentStepIndex === 0}
+        >
+          <ChevronLeft className="mr-1 h-4 w-4" />
+          <span className="relative z-10">Back</span>
+        </Button>
+        
+        <Button
+          className="cyber-button flex-1"
+          onClick={goToNextStep}
+        >
+          <span className="relative z-10">
+            {currentStepIndex === steps.length - 1 ? 'Complete' : 'Next'}
+          </span>
+          {currentStepIndex < steps.length - 1 && <ChevronRight className="ml-1 h-4 w-4" />}
+        </Button>
+      </div>
     </div>
   );
 };
