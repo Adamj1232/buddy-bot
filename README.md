@@ -1,73 +1,60 @@
-# Welcome to your Lovable project
+# Robot Builder Communicator
 
-## Project info
+A fun, interactive web application allowing users to build and customize their own robot assistant. Built with React, TypeScript, Vite, Tailwind CSS, and shadcn-ui.
 
-**URL**: https://lovable.dev/projects/71537133-2ece-46e5-b2e7-eb238e391809
+## Features
 
-## How can I edit this code?
+*   Step-by-step robot customization interface.
+*   Choose head shape, eyes, mouth, antenna, colors, and textures.
+*   Real-time preview of the robot design.
+*   Mobile-first responsive design.
+*   Built with modern web technologies for a smooth user experience.
 
-There are several ways of editing your application.
+## Technologies Used
 
-**Use Lovable**
+This project is built with:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/71537133-2ece-46e5-b2e7-eb238e391809) and start prompting.
+*   [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling
+*   [React](https://reactjs.org/) - A JavaScript library for building user interfaces
+*   [TypeScript](https://www.typescriptlang.org/) - Strong typing for JavaScript
+*   [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
+*   [shadcn-ui](https://ui.shadcn.com/) - Re-usable components built using Radix UI and Tailwind CSS
+*   [Framer Motion](https://www.framer.com/motion/) - Production-ready motion library for React
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
+To run this project locally, you'll need [Node.js](https://nodejs.org/) (version 18 or higher recommended) and npm installed.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1.  **Clone the repository:**
+    ```sh
+    # Replace <repository-url> with the actual URL of this repository
+    git clone <repository-url>
+    cd <repository-directory-name>
+    ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2.  **Install dependencies:**
+    ```sh
+    npm install
+    ```
 
-Follow these steps:
+3.  **Run the development server:**
+    ```sh
+    npm run dev
+    ```
+    This will start the Vite development server, usually available at `http://localhost:5173`. Check your terminal output for the exact URL. The application features hot-reloading for a seamless development experience.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Contributing
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Contributions are welcome! If you'd like to improve the Robot Builder, please follow these steps:
 
-# Step 3: Install the necessary dependencies.
-npm i
+1.  Fork the repository.
+2.  Create a new branch for your feature or bug fix (`git checkout -b feature/your-feature-name`).
+3.  Make your changes and commit them with clear messages (`git commit -m 'Add some awesome feature'`).
+4.  Push your changes to your fork (`git push origin feature/your-feature-name`).
+5.  Open a Pull Request back to the main repository.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+Please ensure your code follows the project's existing style and includes relevant updates to documentation if necessary.
 
-**Edit a file directly in GitHub**
+## License
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/71537133-2ece-46e5-b2e7-eb238e391809) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project is open source. Please add a `LICENSE` file (e.g., choosing an MIT License) to the root of the repository to specify the terms under which others can use, modify, and distribute the code.
