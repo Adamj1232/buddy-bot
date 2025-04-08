@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from 'react';
 
 // Defines structure for API keys
 export interface ApiKeys {
   openai?: string;
   elevenlabs?: string;
+  claude?: string;
   useDefaultServer?: boolean;
 }
 
@@ -22,7 +22,10 @@ export function useApiKeys() {
     localStorage.setItem('api-keys', JSON.stringify(apiKeys));
     
     // Check if all required keys are present or if using default server
-    setIsConfigured(apiKeys.useDefaultServer || (!!apiKeys.openai && !!apiKeys.elevenlabs));
+    setIsConfigured(
+      apiKeys.useDefaultServer || 
+      (!!apiKeys.openai && !!apiKeys.elevenlabs && !!apiKeys.claude)
+    );
   }, [apiKeys]);
 
   // Update specific key

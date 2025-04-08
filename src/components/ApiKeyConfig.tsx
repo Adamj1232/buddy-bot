@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -17,18 +16,21 @@ const ApiKeyConfig: React.FC<ApiKeyConfigProps> = ({ open, onOpenChange }) => {
   
   const [openaiKey, setOpenaiKey] = useState(apiKeys.openai || '');
   const [elevenlabsKey, setElevenlabsKey] = useState(apiKeys.elevenlabs || '');
+  const [claudeKey, setClaudeKey] = useState(apiKeys.claude || '');
   const [useDefaultServer, setUseDefaultServer] = useState(apiKeys.useDefaultServer ?? true);
 
   // Update local state when apiKeys changes
   useEffect(() => {
     setOpenaiKey(apiKeys.openai || '');
     setElevenlabsKey(apiKeys.elevenlabs || '');
+    setClaudeKey(apiKeys.claude || '');
     setUseDefaultServer(apiKeys.useDefaultServer ?? true);
   }, [apiKeys]);
 
   const saveKeys = () => {
     updateKey('openai', openaiKey);
     updateKey('elevenlabs', elevenlabsKey);
+    updateKey('claude', claudeKey);
     updateKey('useDefaultServer', useDefaultServer);
     onOpenChange(false);
   };
@@ -85,6 +87,20 @@ const ApiKeyConfig: React.FC<ApiKeyConfigProps> = ({ open, onOpenChange }) => {
                 value={elevenlabsKey}
                 onChange={(e) => setElevenlabsKey(e.target.value)}
                 placeholder="xi-..."
+                className="col-span-3 bg-robot-dark border-robot-metal text-white"
+                disabled={useDefaultServer}
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="claude" className="text-right col-span-1">
+                Anthropic (Claude)
+              </Label>
+              <Input
+                id="claude"
+                value={claudeKey}
+                onChange={(e) => setClaudeKey(e.target.value)}
+                placeholder="sk-ant-..."
                 className="col-span-3 bg-robot-dark border-robot-metal text-white"
                 disabled={useDefaultServer}
               />

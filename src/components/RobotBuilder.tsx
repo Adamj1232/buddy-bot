@@ -39,7 +39,8 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
   
   const steps: BuilderStep[] = [
     { id: 'name', title: 'Name Your Robot', description: 'Give your robot assistant a name' },
-    { id: 'head', title: 'Head Design', description: 'Select the head shape, texture, and color' },
+    { id: 'headShape', title: 'Head Shape', description: 'Select the overall shape of the head' },
+    { id: 'headDetails', title: 'Head Details', description: 'Choose texture and color for the head' },
     { id: 'eyes', title: 'Eyes', description: 'Choose eye style and color' },
     { id: 'mouth', title: 'Mouth', description: 'Pick a mouth style and animation' },
     { id: 'antenna', title: 'Antenna', description: 'Add an antenna to your robot' },
@@ -63,7 +64,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
   const eyeOptions = ['round', 'square', 'visor', 'scanner', 'alien', 'optical'];
   const mouthOptions = ['smile', 'grid', 'line', 'speaker', 'vent', 'mask'];
   const antennaOptions = ['single', 'double', 'satellite', 'radar', 'combat', 'none'];
-  const textureOptions = ['smooth', 'metallic', 'rusty', 'digital', 'holographic', 'plated', 'armored'];
+  const textureOptions = ['smooth', 'metallic', 'digital', 'holographic', 'plated', 'armored'];
   const mouthAnimOptions = ['standard', 'robotic', 'pulse', 'wave', 'glitch'];
   
   // Color options
@@ -167,20 +168,26 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
                 onChange={(e) => setRobotName(e.target.value)}
                 placeholder="Enter robot name..."
                 className="w-full p-2 bg-robot-dark border border-robot-metal rounded-lg text-white cyber-input"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && robotName.trim()) {
+                    e.preventDefault();
+                    goToNextStep();
+                  }
+                }}
               />
             </div>
           </div>
         );
         
-      case 'head':
+      case 'headShape':
         return (
           <div className="grid grid-cols-1 gap-6">
             <div>
-              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {headOptions.map(option => (
                   <button
                     key={option}
-                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.headType === option ? 'bg-robot-blue text-black' : ''}`}
+                    className={`robot-part-button text-sm min-h-[40px] ${robotConfig.headType === option ? 'bg-robot-blue text-black' : ''}`}
                     onClick={() => updateRobotPart('headType', option)}
                   >
                     {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -188,13 +195,18 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
                 ))}
               </div>
             </div>
-            
+          </div>
+        );
+        
+      case 'headDetails':
+        return (
+          <div className="grid grid-cols-1 gap-6">
             <div>
-              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {textureOptions.map(option => (
                   <button
                     key={option}
-                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.headTexture === option ? 'bg-robot-blue text-black' : ''}`}
+                    className={`robot-part-button text-sm min-h-[40px] ${robotConfig.headTexture === option ? 'bg-robot-blue text-black' : ''}`}
                     onClick={() => updateRobotPart('headTexture', option)}
                   >
                     {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -204,12 +216,12 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-robot-blue mb-2">Head Color</label>
-              <div className="flex gap-3 flex-wrap justify-center">
+              <label className="block text-sm font-medium text-robot-blue mb-1">Head Color</label>
+              <div className="flex overflow-x-auto space-x-3 py-2 scrollbar-thin scrollbar-thumb-robot-metal/50 scrollbar-track-transparent">
                 {headColors.map(({ name, color }) => (
                   <button
                     key={color}
-                    className="color-button relative w-8 h-8 rounded-full border-2 border-transparent hover:border-robot-accent focus:outline-none focus:border-robot-accent transition-colors duration-200 z-10"
+                    className="color-button relative w-8 h-8 rounded-full border-2 border-transparent hover:border-robot-accent focus:outline-none focus:border-robot-accent transition-colors duration-200 z-10 flex-shrink-0"
                     style={{ backgroundColor: color }}
                     title={name}
                     onClick={() => updateRobotPart('headColor', color)}
@@ -230,11 +242,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         return (
           <div className="grid grid-cols-1 gap-6">
             <div>
-              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {eyeOptions.map(option => (
                   <button
                     key={option}
-                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.eyeType === option ? 'bg-robot-blue text-black' : ''}`}
+                    className={`robot-part-button text-sm min-h-[40px] ${robotConfig.eyeType === option ? 'bg-robot-blue text-black' : ''}`}
                     onClick={() => updateRobotPart('eyeType', option)}
                   >
                     {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -244,12 +256,12 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-robot-blue mb-2">Eye Color</label>
-              <div className="flex gap-3 flex-wrap justify-center">
+              <label className="block text-sm font-medium text-robot-blue mb-1">Eye Color</label>
+              <div className="flex overflow-x-auto space-x-3 py-2 scrollbar-thin scrollbar-thumb-robot-metal/50 scrollbar-track-transparent">
                 {eyeColors.map(({ name, color }) => (
                   <button
                     key={color}
-                    className="color-button relative w-8 h-8 rounded-full border-2 border-transparent hover:border-robot-accent focus:outline-none focus:border-robot-accent transition-colors duration-200 z-10"
+                    className="color-button relative w-8 h-8 rounded-full border-2 border-transparent hover:border-robot-accent focus:outline-none focus:border-robot-accent transition-colors duration-200 z-10 flex-shrink-0"
                     style={{ backgroundColor: color }}
                     title={name}
                     onClick={() => updateRobotPart('eyeColor', color)}
@@ -270,11 +282,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
         return (
           <div className="grid grid-cols-1 gap-6">
             <div>
-              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {mouthOptions.map(option => (
                   <button
                     key={option}
-                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.mouthType === option ? 'bg-robot-blue text-black' : ''}`}
+                    className={`robot-part-button text-sm min-h-[40px] ${robotConfig.mouthType === option ? 'bg-robot-blue text-black' : ''}`}
                     onClick={() => updateRobotPart('mouthType', option)}
                   >
                     {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -284,11 +296,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
             </div>
 
             <div>
-              <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+              <div className="flex overflow-x-auto space-x-3 py-2 scrollbar-thin scrollbar-thumb-robot-metal/50 scrollbar-track-transparent">
                 {mouthAnimOptions.map(option => (
                   <button
                     key={option}
-                    className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.mouthAnimation === option ? 'bg-robot-blue text-black' : ''}`}
+                    className={`robot-part-button rounded-full w-16 h-16 flex items-center justify-center flex-shrink-0 text-xs ${robotConfig.mouthAnimation === option ? 'bg-robot-blue text-black' : ''}`}
                     onClick={() => updateRobotPart('mouthAnimation', option)}
                   >
                     {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -302,11 +314,11 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
       case 'antenna':
         return (
           <div>
-            <div className={`flex gap-2 flex-wrap ${isMobile ? 'justify-center' : ''}`}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {antennaOptions.map(option => (
                 <button
                   key={option}
-                  className={`robot-part-button ${isMobile ? 'text-sm flex-grow min-w-[48%]' : 'flex-1'} ${robotConfig.antennaType === option ? 'bg-robot-blue text-black' : ''}`}
+                  className={`robot-part-button text-sm min-h-[40px] ${robotConfig.antennaType === option ? 'bg-robot-blue text-black' : ''}`}
                   onClick={() => updateRobotPart('antennaType', option)}
                 >
                   {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -399,7 +411,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
           </div>
         </div>
         
-        <div className="bg-robot-dark/60 p-4 relative overflow-hidden min-h-[320px]">
+        <div className="bg-robot-dark/60 p-4 relative overflow-hidden overflow-y-auto h-[280px]">
           <AnimatePresence custom={direction} initial={false}>
             <motion.div
               key={currentStepIndex}
@@ -412,7 +424,7 @@ const RobotBuilder: React.FC<RobotBuilderProps> = ({ onRobotComplete }) => {
                 x: { type: "spring", stiffness: 300, damping: 30 },
                 opacity: { duration: 0.2 }
               }}
-              className="w-full relative"
+              className="w-full absolute top-0 left-0 p-4"
             >
               {renderStepContent()}
             </motion.div>
