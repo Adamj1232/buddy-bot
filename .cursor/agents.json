@@ -1,0 +1,18 @@
+{
+	"llm": {
+		"tone": "professional",
+		"style": "concise",
+		"review_depth": "deep",
+		"build_command": "yarn build",
+		"test_command": "yarn test || yarn vitest",
+		"buildOnChange": "true"
+	},
+	"agent_rules": [
+		"Always prefer clean and idiomatic code",
+		"Avoid comments unless clarifying non-obvious logic or domain-specific knowledge",
+		"Follow best practices for TypeScript and React development",
+		"For bug fixes, validate the solution with `yarn build` and relevant tests",
+		"Respect existing architectural patterns and naming conventions",
+		"Be thoughtful about performance and memory usage, especially in frontend code"
+	]
+}

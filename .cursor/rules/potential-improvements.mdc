@@ -1,0 +1,28 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Potential Improvements & Areas to Review
+
+This list is based on initial analysis and should be revisited as the project evolves.
+
+**High Priority:**
+
+1.  **Enable TypeScript Strict Mode:** The current configuration (`tsconfig.app.json`) has `"strict": false` and other related flags disabled. Enabling strict mode (`"strict": true`) is crucial for catching potential errors, improving code quality, and ensuring type safety. This should be the top technical debt item to address.
+2.  **LLM Safety Implementation Review:** Double-check and rigorously test all input sanitization, output filtering, and backend guardrails for the LLM interaction, given the child audience. This is paramount.
+3.  **Authentication Security:** Review the implementation details of `AuthContext` and the login flow for security best practices (e.g., token storage, handling, expiration). The current code only shows the frontend structure.
+
+**Medium Priority:**
+
+4.  **ESLint/Prettier Configuration:** Ensure ESLint rules (check `eslint.config.js` - not read yet) and Prettier formatting are consistently applied and potentially configured more strictly to align with the rules defined in `.cursorrules` (or these new MDC rules). Consider adding specific ESLint plugins (e.g., `eslint-plugin-react`, `eslint-plugin-jsx-a11y`).
+5.  **Error Handling:** Systematically implement error handling, especially around API calls (`src/services`) using TanStack Query's error states and potentially displaying user-friendly error messages (e.g., using Sonner/Toaster). Add `try...catch` for critical async operations not handled by TanStack Query.
+6.  **Code Consistency:** Perform a pass to ensure consistent application of naming conventions, component structure, and the patterns outlined in other rules.
+7.  **Bundle Size Optimization:** As the app grows, analyze the bundle size. Consider code splitting/lazy loading routes or heavy components using `React.lazy` and Suspense.
+
+**Low Priority:**
+
+8.  **Prop Drilling:** While Context API and TanStack Query help, review if any components have excessive prop drilling that could be refactored using context or composition.
+9.  **Testing:** Implement a testing strategy (e.g., Vitest + React Testing Library) for unit and integration tests, especially for critical logic (auth, services, complex components).
+
+**Note on `.cursorrules`:** The existing `.cursorrules` file is now legacy. Consider migrating its relevant content into these `.cursor/rules/*.mdc` files and eventually removing `.cursorrules` for clarity, following Cursor best practices.

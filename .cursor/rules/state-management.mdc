@@ -1,0 +1,33 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# State Management
+
+This project uses a combination of approaches for state management:
+
+1.  **React Context API:**
+    *   Used for global state that doesn't change extremely frequently, such as authentication status (`src/contexts/AuthContext.tsx`).
+    *   Context providers (`AuthProvider`) are typically wrapped around relevant parts of the component tree, often in `src/App.tsx`.
+    *   Consume context using custom hooks (e.g., `useAuth`).
+
+2.  **TanStack Query (React Query):**
+    *   Version: v5 (check `package.json` for exact version).
+    *   **Primary tool for managing server state:** fetching, caching, synchronizing, and updating data from APIs.
+    *   Setup: `QueryClient` and `QueryClientProvider` are configured in `src/App.tsx`.
+    *   Usage: Use hooks like `useQuery` (for fetching data), `useMutation` (for creating/updating/deleting data).
+    *   Define query keys carefully for caching and invalidation.
+    *   API interaction logic likely resides in `src/services` and is called by `useQuery`/`useMutation` functions.
+    *   Handles loading, error, and success states automatically.
+
+3.  **Local Component State (`useState`, `useReducer`):**
+    *   Used for UI-specific state that doesn't need to be shared globally or persisted across sessions (e.g., form inputs, toggles, modal visibility).
+    *   Keep state as local as possible.
+
+**General Guidelines:**
+
+*   **Server State:** Always prefer TanStack Query for data fetched from APIs.
+*   **Global Client State:** Use Context API for application-wide state like user preferences, theme, or authentication status.
+*   **Local UI State:** Use `useState` or `useReducer` for state confined to a single component or a small group of related components.
+*   **Avoid Prop Drilling:** If you find yourself passing props down multiple levels, consider if TanStack Query or Context API is more appropriate.

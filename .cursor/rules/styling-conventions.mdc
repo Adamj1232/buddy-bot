@@ -1,0 +1,16 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Styling Conventions
+
+*   **Primary Tool:** Tailwind CSS is the primary styling method.
+*   **Configuration:** Tailwind is configured in `tailwind.config.ts`. Note the custom colors (`robot.*`, `sidebar.*`) and animations defined there.
+*   **Shadcn/UI:** UI components from `src/components/ui` (based on Shadcn/UI) are used. These components are styled using Tailwind CSS variables (`hsl(var(--...))`) defined in `src/index.css`.
+*   **Utility Classes:** Apply styles directly using Tailwind utility classes in the `className` prop.
+*   **`clsx` / `tailwind-merge`:** Use `clsx` for conditionally applying classes and `tailwind-merge` (via the utility function likely in `src/lib/utils.ts` - standard Shadcn setup) to handle merging/overriding Tailwind classes, especially when building reusable components with variant styles.
+*   **Custom CSS:** Minimize custom CSS in `.css` files. Prefer Tailwind utilities. Global styles are in `src/index.css`. Component-specific overrides should be rare.
+*   **Responsiveness:** Use Tailwind's responsive modifiers (e.g., `md:`, `lg:`) for creating responsive layouts.
+*   **Dark Mode:** Tailwind's dark mode variant (`dark:`) is enabled (`darkMode: ["class"]`). Use it for implementing dark theme styles.
+*   **Animations:** Utilize the custom animations defined in `tailwind.config.ts` (e.g., `animate-float`, `animate-robot-speak`) and the `tailwindcss-animate` plugin.

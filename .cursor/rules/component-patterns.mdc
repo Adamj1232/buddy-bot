@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Component Patterns
+
+*   **Functional Components:** Use functional components with Hooks exclusively. Avoid class components.
+*   **TypeScript:** Write all components in TypeScript (`.tsx`). Define props using `interface`.
+*   **Naming:** Use PascalCase for component names (e.g., `UserProfileCard`). Use camelCase for non-component files (`.ts`) like hooks or utilities.
+*   **File Structure:**
+    *   General reusable components: `src/components/`
+    *   UI primitives (Shadcn/UI based): `src/components/ui/`
+    *   Page-level components: `src/pages/`
+    *   Consider creating subdirectories within `src/components/` for feature-specific components if complexity grows (e.g., `src/components/robot-customizer/`).
+*   **Shadcn/UI:** This project uses Shadcn/UI (`src/components/ui`).
+    *   Leverage these components for UI elements (Button, Input, Card, etc.).
+    *   Customize them via Tailwind CSS classes as needed.
+    *   Refer to Shadcn/UI documentation when using or extending these components.
+*   **Composition:** Favor composition over inheritance. Build complex UIs by combining smaller, reusable components.
+*   **Props:** Keep prop interfaces clear and specific. Avoid overly complex prop objects.
+*   **Accessibility (a11y):** Write accessible components. Use semantic HTML, provide ARIA attributes where necessary, and ensure keyboard navigability. Consider adding `eslint-plugin-jsx-a11y`.
+*   **Memoization:** Use `React.memo` for components only when necessary to optimize performance, based on profiling. Avoid premature optimization.

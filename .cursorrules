@@ -1,0 +1,110 @@
+{
+  "language": ["typescript"],
+  "framework": ["react"],
+  "context": [
+    "https://react.dev/reference",
+    "https://www.typescriptlang.org/docs/",
+    "https://www.rust-lang.org/learn",
+    "https://tailwindcss.com/docs"
+  ],
+  "api": {
+    "typescript": {
+      "strict": true,
+      "version": "latest"
+    },
+    "react": {
+      "docs": "https://react.dev/content.json",
+      "version": "^18.0.0",
+      "refresh": "weekly"
+    }
+  },
+  "includePatterns": [
+    "src/**/*.{ts,tsx,js,jsx,svelte,rs}",
+    "*.config.{ts,js}",
+    "vite.config.ts",
+    "Cargo.toml"
+  ],
+  "excludePatterns": [
+    "node_modules/**",
+    "build/**",
+    "dist/**",
+    "target/**"
+  ],
+  "rules": {
+    "code_style": {
+      "description": "Enforce clean, readable, and concise code without unnecessary comments",
+      "patterns": [
+        {
+          "match": ".*",
+          "message": "Write clean, self-explanatory code using descriptive variable names (e.g., isLoading, hasError). Avoid comments unless logic is complex and requires explanation. Use single quotes, omit semicolons unless required, and keep line length under 80 characters."
+        }
+      ]
+    },
+    "typescript_strict": {
+      "description": "Enforce strict TypeScript practices",
+      "patterns": [
+        {
+          "match": "\\btype\\b",
+          "message": "Prefer interfaces over types for object shapes unless unions or intersections are needed.",
+          "replacement": "interface"
+        },
+        {
+          "match": "\\benum\\b",
+          "message": "Avoid enums; use const objects or maps for better tree-shaking.",
+          "replacement": "const"
+        },
+        {
+          "match": ".*",
+          "message": "Use explicit type annotations for function parameters and return types. Leverage TypeScript generics for reusable components."
+        }
+      ]
+    },
+
+
+    "formatting": {
+      "description": "Ensure consistent code formatting",
+      "patterns": [
+        {
+          "match": ".*",
+          "message": "Use Prettier with single quotes, no semicolons, 2-space indentation, and 80-character line width."
+        }
+      ]
+    },
+    "validation": {
+      "description": "Validate code with build command",
+      "patterns": [
+        {
+          "match": ".*",
+          "message": "After generating or fixing code, validate with 'yarn build'. Ensure no build errors before finalizing. Use 'yarn tsc --noEmit' for TypeScript type-checking."
+        }
+      ]
+    },
+    "context_aware": {
+      "description": "Leverage project context and documentation",
+      "patterns": [
+        {
+          "match": ".*",
+          "message": "Analyze project documentation, README, and existing code before generating solutions. Reference official React, TypeScript, and Rust documentation for accuracy. Take time to ensure solutions align with project architecture."
+        }
+      ]
+    },
+    "error_handling": {
+      "description": "Implement robust error handling",
+      "patterns": [
+        {
+          "match": ".*",
+          "message": "Include try-catch for async operations in TypeScript. Use Zod for runtime validation in TypeScript. In Rust, use match expressions for Result/Option. Log errors with context for debugging."
+        }
+      ]
+    },
+    "performance": {
+      "description": "Optimize for performance",
+      "patterns": [
+        {
+          "match": ".*",
+          "message": "Minimize bundle size in React by avoiding unnecessary dependencies. Use lazy loading for routes. In Rust, prefer stack allocations and avoid cloning unless necessary."
+        }
+      ]
+    }
+  }
+}

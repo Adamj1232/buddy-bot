@@ -1,0 +1,21 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Safety Considerations (LLM Interaction)
+
+**Non-Negotiable Priority:** Given the target audience (children), ensuring safety in the LLM interaction is paramount.
+
+*   **Input Sanitization:** Rigorously sanitize all user input sent to the LLM backend. Prevent prompt injection attacks.
+*   **Output Filtering:** Filter LLM responses aggressively BEFORE displaying them to the user.
+    *   Block inappropriate language, topics, or harmful content.
+    *   Ensure responses are age-appropriate and align with STEM educational goals.
+    *   Consider mechanisms to detect and prevent the LLM from generating personally identifiable information (PII) or encouraging its disclosure.
+*   **Backend Guardrails:** Implement strong guardrails on the backend service that interfaces with the LLM.
+    *   Enforce strict system prompts to guide the LLM's behavior and persona.
+    *   Implement backend-side filtering and safety checks as a second layer of defense.
+    *   Rate limit requests.
+*   **Data Privacy:** Do not log or store sensitive chat interactions unnecessarily. Comply with relevant child privacy regulations (e.g., COPPA if applicable).
+*   **User Reporting:** Consider implementing a mechanism for users (or parents) to report problematic interactions.
+*   **Regular Review:** Continuously review and update safety mechanisms as LLM capabilities evolve.

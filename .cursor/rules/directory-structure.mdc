@@ -1,0 +1,26 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Directory Structure
+
+*   **`src/`**: Contains all application source code.
+    *   **`main.tsx`**: Application entry point.
+    *   **`App.tsx`**: Root component, sets up providers and routing.
+    *   **`index.css`**: Global styles and Tailwind CSS base/component layers, CSS variables for Shadcn.
+    *   **`components/`**: Shared React components.
+        *   **`ui/`**: Shadcn/UI components (buttons, inputs, cards, etc.). Treat these as UI primitives.
+        *   **(Feature Folders)**: Consider creating folders here for larger features (e.g., `robot-builder/`, `chat-interface/`) containing related components.
+    *   **`pages/`**: Components representing application pages/routes (e.g., `Login.tsx`, `Index.tsx`).
+    *   **`contexts/`**: React Context providers and hooks (e.g., `AuthContext.tsx`).
+    *   **`hooks/`**: Custom reusable React hooks (other than context hooks).
+    *   **`lib/`**: Utility functions (e.g., `utils.ts` likely containing `cn` for merging class names).
+    *   **`services/`**: API interaction logic (functions called by TanStack Query hooks, e.g., fetching user data, sending chat messages).
+    *   **`types/`**: Shared TypeScript type definitions and interfaces.
+*   **`public/`**: Static assets served directly by Vite.
+*   **`.cursor/`**: Cursor-specific settings and rules.
+    *   **`rules/`**: Project-specific rules (these files).
+*   **Config Files**: Root directory contains configuration files for Vite, TypeScript, Tailwind, ESLint, PostCSS, etc.
+
+Use the `@/` alias (configured in `tsconfig.json` and `vite.config.ts`) for absolute imports from the `src/` directory (e.g., `import { Button } from '@/components/ui/button'`).

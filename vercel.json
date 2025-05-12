@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors https://buddybotlearning.com https://www.buddybotlearning.com http://localhost:5173 http://localhost:3000;"
+        }
+      ]
+    }
+  ]
+}

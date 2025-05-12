@@ -1,0 +1,19 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Routing & Authentication
+
+*   **Library:** `react-router-dom` v6 (check `package.json` for exact version) is used for routing.
+*   **Configuration:** Routes are defined within `src/App.tsx` using `<BrowserRouter>`, `<Routes>`, and `<Route>` components.
+*   **Pages:** Page components reside in `src/pages` (e.g., `Index.tsx`, `Login.tsx`, `NotFound.tsx`).
+*   **Authentication:**
+    *   Handled via `src/contexts/AuthContext.tsx` (using `useAuth` hook).
+    *   A `ProtectedRoute` component (defined in `src/App.tsx`) wraps routes that require authentication.
+    *   It checks the `isLoggedIn` state from `AuthContext` and redirects to `/login` if the user is not authenticated.
+*   **Adding Routes:** When adding new pages/routes:
+    *   Create the page component in `src/pages`.
+    *   Add a new `<Route>` entry in `src/App.tsx`.
+    *   Wrap the route's `element` with `<ProtectedRoute>` if it requires authentication.
+*   **Context:** `AuthProvider` must wrap the `<Routes>` in `src/App.tsx` for `useAuth` and `ProtectedRoute` to function correctly.

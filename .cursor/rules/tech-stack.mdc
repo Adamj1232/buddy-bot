@@ -1,0 +1,29 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Technology Stack
+
+This project is built with the following core technologies:
+
+*   **Framework:** React (`^18.3.1`)
+*   **Language:** TypeScript (`^5.5.3`)
+*   **Build Tool:** Vite (`^5.4.1`)
+*   **Styling:** Tailwind CSS (`^3.4.11`) with `tailwindcss-animate` (`^1.0.7`)
+*   **UI Components:** Shadcn/UI (various `@radix-ui/*` packages, see `package.json`)
+*   **Routing:** React Router DOM (`^6.26.2`)
+*   **State Management (Server):** TanStack Query (React Query) (`^5.56.2`)
+*   **State Management (Client):** React Context API, `useState`/`useReducer`
+*   **Forms:** React Hook Form (`^7.53.0`) with Zod resolver (`@hookform/resolvers` `^3.9.0`)
+*   **Schema Validation:** Zod (`^3.23.8`)
+*   **Utility Libraries:** `clsx`, `tailwind-merge`, `lucide-react`, `date-fns`, etc. (see `package.json`)
+*   **Linting/Formatting:** ESLint (`^9.9.0`), likely Prettier (check config)
+
+**Key Points:**
+
+*   Refer to the documentation for the specific versions listed in `package.json` when implementing features or troubleshooting.
+*   Leverage Shadcn/UI components for consistency.
+*   Use TanStack Query for API interactions.
+*   Use Zod for data validation (forms, API responses).
+*   Follow the established TypeScript and styling conventions.

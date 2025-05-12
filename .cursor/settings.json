@@ -1,0 +1,104 @@
+{
+    // Editor appearance and behavior
+    "editor.fontFamily": "JetBrains Mono, Fira Code, Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontSize": 14,
+    "editor.lineHeight": 22,
+    "editor.fontLigatures": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.wordWrap": "on",
+    "editor.minimap.enabled": false,
+    "editor.scrollBeyondLastLine": false,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.renderWhitespace": "boundary",
+    "editor.cursorBlinking": "smooth",
+    
+    // Terminal settings
+    "terminal.integrated.fontFamily": "JetBrains Mono, Fira Code, monospace",
+    "terminal.integrated.fontSize": 14,
+    
+    // File handling
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.eol": "\n",
+    "files.autoSave": "onFocusChange",
+    "files.exclude": {
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.DS_Store": true,
+      "**/node_modules": true,
+      "**/dist": false,
+      "**/build": false
+    },
+    
+    // Window and UI settings
+    "workbench.colorTheme": "GitHub Dark Default",
+    "workbench.editor.enablePreview": false,
+    "workbench.startupEditor": "none",
+    
+    // TypeScript settings
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "typescript.preferences.importModuleSpecifier": "shortest",
+    "typescript.preferences.quoteStyle": "single",
+    "typescript.suggest.completeFunctionCalls": true,
+    "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+    "typescript.inlayHints.parameterNames.enabled": "literals",
+    
+    // JavaScript/TypeScript language specific settings
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit",
+        "source.fixAll.eslint": "explicit"
+      }
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit",
+        "source.fixAll.eslint": "explicit"
+      }
+    },
+    "[svelte]": {
+      "editor.defaultFormatter": "svelte.svelte-vscode",
+      "editor.formatOnSave": true
+    },
+    
+    // Prettier configuration
+    "prettier.singleQuote": true,
+    "prettier.semi": true,
+    "prettier.printWidth": 100,
+    "prettier.trailingComma": "es5",
+    "prettier.arrowParens": "avoid",
+    "prettier.bracketSpacing": true,
+    
+    // Git configuration
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    
+    // Cursor AI specific settings
+    "cursor.showChatPanel": true,
+    "cursor.dialVerbosity": 70,
+    "cursor.dialContextPrefill": true,
+    "cursor.dialPrompts": {
+      "defaultPrompt": "You are an expert TypeScript/JavaScript developer with deep knowledge of React and Svelte. Prioritize clean, readable code that follows best practices. Avoid unnecessary comments. Keep your explanations clear and concise. Consider performance implications. Always validate your solutions."
+    },
+    "cursor.dialMaxTokens": 4000,
+    "cursor.dialTemperature": 0.2,
+    "cursor.commandK.defaultPrompt": "Generate clean, concise and optimized code.",
+    "cursor.projectSearchFilters": {
+      "ignorePaths": ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.git/**"]
+    },
+    "cursor.agent.allowAgentToBrowseWeb": true,
+    "cursor.agent.allowAgentToRunCommands": true,
+    "cursor.agent.useAgentContext": true,
+    "cursor.agent.allowAgentToInstallPackages": true
+  }
+  

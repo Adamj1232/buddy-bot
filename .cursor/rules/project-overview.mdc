@@ -1,0 +1,19 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Overview: Buddy Bot
+
+*   **Purpose:** An educational web application designed for children.
+*   **Core Concept:** Allows children to customize their own virtual robot buddy.
+*   **Interaction:** The customized robot interacts with an LLM (Large Language Model) in a STEM (Science, Technology, Engineering, Math) focused manner.
+*   **Key Goal:** Provide a **safe**, engaging, and educational experience.
+*   **Target Audience:** Children (ensure UI/UX and content are age-appropriate and safe).
+
+**Development Focus:**
+
+*   **Safety First:** Prioritize safety mechanisms, content filtering, and data privacy, especially concerning the LLM interaction (See `safety-considerations.mdc`).
+*   **User Experience (UX):** Create an intuitive, visually appealing, and fun interface for children.
+*   **Modularity:** Build reusable components for robot customization and interaction elements.
+*   **Maintainability:** Write clean, well-documented (where necessary), and typed code adhering to the project's standards (See other rule files).

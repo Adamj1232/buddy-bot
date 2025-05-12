@@ -1,0 +1,16 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# TypeScript Practices
+
+*   **Strict Mode Goal:** While currently disabled (`tsconfig.app.json` has `"strict": false`), the goal is to **enable full strict mode (`"strict": true`)**. Prioritize fixing any resulting errors. See `potential-improvements.mdc`.
+*   **Explicit Types:** Use explicit type annotations for function parameters, return types, and variables where type inference is not obvious or immediate.
+*   **Interfaces vs Types:** Prefer `interface` for defining object shapes (like component props, API responses). Use `type` for unions, intersections, or aliasing primitives/complex types.
+*   **Avoid `any`:** Do not use `any` unless absolutely necessary for unavoidable legacy code or complex third-party library integration. If used, add a `// TODO:` comment explaining why and plan to replace it.
+*   **`unknown` over `any`:** When dealing with data of unknown structure (e.g., some API responses before validation), prefer `unknown` and perform type checking or use a type guard (like Zod) before using the data.
+*   **Generics:** Leverage TypeScript generics for creating reusable components, hooks, or utility functions.
+*   **Enums:** Avoid traditional `enum`s. Use string literal unions (`type Status = 'loading' | 'success' | 'error'`) or `as const` objects (`const STATUS = { LOADING: 'loading', SUCCESS: 'success'} as const;`) for better tree-shaking and clarity.
+*   **Non-Null Assertion Operator (`!`):** Avoid using the non-null assertion operator (`!`) where possible. Prefer explicit checks or optional chaining (`?.`). The `createRoot(document.getElementById("root")!).render(<App />);` in `main.tsx` is an exception, but generally avoid it.
+*   **Type Imports:** Use `import type { ... } from '...'` when importing only types or interfaces to make it clear.
